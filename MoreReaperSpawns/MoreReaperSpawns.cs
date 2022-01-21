@@ -40,6 +40,7 @@ namespace MoreReaperSpawns
         static void spawnReapers()
         {
             //Random number generator will spawn reapers within a min/max area so they're never exactly the same
+            //Useful resource for figuring out general coordinates: https://subnauticamap.io
 
             //Floating Islands Reaper
             float[] floatingIslandsCoords = {
