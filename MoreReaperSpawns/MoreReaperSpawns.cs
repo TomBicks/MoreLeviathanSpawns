@@ -39,8 +39,7 @@ namespace MoreReaperSpawns
 
         static void spawnReapers()
         {
-            //float[] floatingIslandsCoords = { -854f, -80f, -1138f };
-            //Random number generator will spawn reapers within a min/max area so they're nevery exactly the same
+            //Random number generator will spawn reapers within a min/max area so they're never exactly the same
 
             //Floating Islands Reaper
             float[] floatingIslandsCoords = {
