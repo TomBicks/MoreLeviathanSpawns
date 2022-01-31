@@ -27,7 +27,7 @@ namespace MoreLeviathanSpawns
         }
     }
 
-    [Menu("More Reaper Spawns")]
+    [Menu("More Leviathan Spawns")]
     public class Config : ConfigFile
     {
         [Slider("Spawn Intensity", Min = 1F, Max = 5F, DefaultValue = 1F, Step = 1F, Tooltip = "Defines how many leviathan spawns you want to add to the game. 1 will spawn about 5 to 8 additional leviathans. 5 will spawn roughly 30 to 35."), OnChange(nameof(SpawnIntensityChanged))]
