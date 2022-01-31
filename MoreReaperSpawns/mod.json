@@ -1,10 +1,10 @@
 {
-  "Id": "MoreReaperSpawns",
-  "DisplayName": "More Reaper Spawns",
+  "Id": "MoreLeviathanSpawns",
+  "DisplayName": "More Leviathan Spawns",
   "Author": "Brett Connolly",
   "Version": "1.0.0",
   "Enable": true,
-  "AssemblyName": "MoreReaperSpawns.dll",
+  "AssemblyName": "MoreLeviathanSpawns.dll",
   "VersionDependencies": {
     "SMLHelper": "2.12.1"
   },

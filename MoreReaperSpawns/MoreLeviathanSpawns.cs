@@ -5,11 +5,11 @@ using System.IO;
 using System.Xml.Serialization;
 using Logger = QModManager.Utility.Logger;
 
-namespace MoreReaperSpawns
+namespace MoreLeviathanSpawns
 {
     [HarmonyPatch(typeof(Player))]
     [HarmonyPatch("Awake")]
-    internal class SpawnMoreReapers
+    internal class SpawnMoreLeviathans
     {
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
@@ -22,7 +22,7 @@ namespace MoreReaperSpawns
 
                 if (!File.Exists(filepath))
                 {
-                    Logger.Log(Logger.Level.Info, "MoreReaperSpawns initialised for the first time. Creating XML file...");
+                    Logger.Log(Logger.Level.Info, "MoreLeviathanSpawns initialised for the first time. Creating XML file...");
                     CreateXMLFile(filepath);
                 } else
                 {
@@ -62,8 +62,8 @@ namespace MoreReaperSpawns
 
             Logger.Log(Logger.Level.Info, $"Spawn intensity is set to: {spawnData.Intensity}");
             //this will set a general amount of spawns based on the spawn intensity the player set, defaulting to '1'
-            int loopSize = (int)((spawnData.CoordsAndType.Length / 5) * spawnData.Intensity);
-            Logger.Log(Logger.Level.Info, $"This save file will load {loopSize} of {spawnData.CoordsAndType.Length} total spawns");
+            int spawnTotal = (int)((spawnData.CoordsAndType.Length / 5) * spawnData.Intensity);
+            Logger.Log(Logger.Level.Info, $"This save file will load {spawnTotal} of {spawnData.CoordsAndType.Length} total spawns");
 
             //if player opted for spanws to always be random, simply shuffle the spawn coordinates 2D array,
             //defaulting to 'false'
@@ -74,7 +74,7 @@ namespace MoreReaperSpawns
                 Shuffle(new Random(), spawnData.CoordsAndType);
             }
 
-            for (int i = 0; i < loopSize; i++)
+            for (int i = 0; i < spawnTotal; i++)
             {
                 TechType creatureType = new TechType();
                 string spawnType = "";
@@ -87,6 +87,10 @@ namespace MoreReaperSpawns
                     case 2://Ghost Leviathan
                         creatureType = TechType.GhostLeviathan;
                         spawnType = "Ghost Leviathan";
+                        break;
+                    case 3://Ghost Leviathan (Juvenile)
+                        creatureType = TechType.GhostLeviathanJuvenile;
+                        spawnType = "Ghost Leviathan (Juvenile)";
                         break;
                 }
                 Logger.Log(Logger.Level.Info, $"Spawn #{i} - Type:{spawnType} - Coords: {spawnData.CoordsAndType[i][0]} {spawnData.CoordsAndType[i][1]} {spawnData.CoordsAndType[i][2]}");
@@ -139,20 +143,22 @@ namespace MoreReaperSpawns
             new float[]{ -1122, -113, 710, 1 },
             new float[]{ -1190, -102, -527, 1 },
             new float[]{ -754, -102, 1334, 1 },
-            new float[]{ -396, -350, -925, 2 },
-            new float[]{ -196, -436, 1056, 2 },
-            new float[]{ -34, -400, 926, 2 },
+            new float[]{ 432, -65, 690, 1 },
+            new float[]{ 383, -60, 40, 1 },
             new float[]{ -284, -293, 1100, 2 },
-            new float[]{ -958, -300, -540, 2 },
-            new float[]{ 37, -228, -211, 2 },
-            new float[]{ -618, -213, -82, 2 },
-            new float[]{ -695, -478, -993, 2 },
-            new float[]{ -988, -885, 400, 2 },
             new float[]{ 1065, -211, 466, 2 },
-            new float[]{ 1443, -292, 883, 2 },
-            new float[]{ 1075, -486, 944, 2 },
             new float[]{ 876, -122, 881, 2 },
-            new float[]{ -28, -318, 1296, 2 }
+            new float[]{ -28, -318, 1296, 2 },
+            new float[]{ 10, -219, -220, 3 },
+            new float[]{ -396, -350, -925, 3 },
+            new float[]{ -958, -300, -540, 3 },
+            new float[]{ -988, -885, 400, 3 },
+            new float[]{ -695, -478, -993, 3 },
+            new float[]{ -618, -213, -82, 3 },
+            new float[]{ -34, -400, 926, 3 },
+            new float[]{ -196, -436, 1056, 3 },
+            new float[]{ 1443, -260, 883, 3 },
+            new float[]{ 1075, -475, 944, 3 }
         };
     }
 }

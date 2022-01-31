@@ -7,8 +7,8 @@
     <ProjectGuid>{4E9B9FE3-DD60-437E-AC4A-A88166A8B033}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MoreReaperSpawns</RootNamespace>
-    <AssemblyName>MoreReaperSpawns</AssemblyName>
+    <RootNamespace>MoreLeviathanSpawns</RootNamespace>
+    <AssemblyName>MoreLeviathanSpawns</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -67,7 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MoreReaperSpawns.cs" />
+    <Compile Include="MoreLeviathanSpawns.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QMod.cs" />
   </ItemGroup>

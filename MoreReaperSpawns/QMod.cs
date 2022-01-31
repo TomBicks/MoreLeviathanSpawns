@@ -8,7 +8,7 @@ using SMLHelper.V2.Json;
 using SMLHelper.V2.Options.Attributes;
 using SMLHelper.V2.Options;
 
-namespace MoreReaperSpawns
+namespace MoreLeviathanSpawns
 {
     [QModCore]
     public static class QMod
@@ -30,7 +30,7 @@ namespace MoreReaperSpawns
     [Menu("More Reaper Spawns")]
     public class Config : ConfigFile
     {
-        [Slider("Spawn Intensity", Min = 1F, Max = 5F, DefaultValue = 1F, Step = 1F, Tooltip = "Defines how many leviathan spawns you want to add to the game"), OnChange(nameof(SpawnIntensityChanged))]
+        [Slider("Spawn Intensity", Min = 1F, Max = 5F, DefaultValue = 1F, Step = 1F, Tooltip = "Defines how many leviathan spawns you want to add to the game. 1 will spawn about 5 to 8 additional leviathans. 5 will spawn roughly 30 to 35."), OnChange(nameof(SpawnIntensityChanged))]
         public float SpawnIntensity = 1F;
         [Toggle("Always randomize spawns", Tooltip = "By default, spawn locations are chosen randomly then saved and remain static for rest of playthrough. If this option is checked, spawns will always randomize when opening that save file."), OnChange(nameof(AlwaysRandomizedChanged))]
         public bool AlwaysRandomized = false;
