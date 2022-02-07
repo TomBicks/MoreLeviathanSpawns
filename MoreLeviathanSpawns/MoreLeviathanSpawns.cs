@@ -36,14 +36,15 @@ namespace MoreLeviathanSpawns
         {
             SpawnData spawnData = new SpawnData();
 
-            //Get Spawn Intensity and find out if the player wants the spawns to always be randomized on every time
-            //the save file is loaded.
-            spawnData.Intensity = QMod.Config.SpawnIntensity;
+            //Get values from whatever the player selected from the mod menu
             spawnData.AlwaysRandomized = QMod.Config.AlwaysRandomized;
+            spawnData.ReaperSpawnIntensity = QMod.Config.ReaperSpawnIntensity;
+            spawnData.GhostSpawnIntensity = QMod.Config.GhostSpawnIntensity;
 
             //Shuffle 2D array of coordinates. Depending on how many spawns the player wants in the game (set via
             //the in-game mod menu), spawn in that many creatures starting from the top of the 2D array.
-            Shuffle(new Random(), spawnData.CoordsAndType);
+            Shuffle(new Random(), spawnData.ReaperCoords);
+            Shuffle(new Random(), spawnData.GhostCoordsAndType);
 
             //create the XML file
             XmlSerializer writer = new XmlSerializer(typeof(SpawnData));
@@ -60,10 +61,15 @@ namespace MoreLeviathanSpawns
             SpawnData spawnData = (SpawnData) reader.Deserialize(file);
             file.Close();
 
-            Logger.Log(Logger.Level.Info, $"Spawn intensity is set to: {spawnData.Intensity}");
+            Logger.Log(Logger.Level.Info, $"Reaper spawn intensity is set to: {spawnData.ReaperSpawnIntensity}");
+            Logger.Log(Logger.Level.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
+            
             //this will set a general amount of spawns based on the spawn intensity the player set, defaulting to '1'
-            int spawnTotal = (int)((spawnData.CoordsAndType.Length / 5) * spawnData.Intensity);
-            Logger.Log(Logger.Level.Info, $"This save file will load {spawnTotal} of {spawnData.CoordsAndType.Length} total spawns");
+            int reaperSpawnTotal = (int)(spawnData.ReaperCoords.Length / 3 * spawnData.ReaperSpawnIntensity);
+            int ghostSpawnTotal = (int)(spawnData.GhostCoordsAndType.Length / 3 * spawnData.GhostSpawnIntensity);
+
+            Logger.Log(Logger.Level.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Length} total reaper spawns");
+            Logger.Log(Logger.Level.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoordsAndType.Length} total ghost spawns");
 
             //if player opted for spanws to always be random, simply shuffle the spawn coordinates 2D array,
             //defaulting to 'false'
@@ -71,32 +77,36 @@ namespace MoreLeviathanSpawns
             if (spawnData.AlwaysRandomized)
             {
                 Logger.Log(Logger.Level.Info, $"shuffling (randomizing) spawns...");
-                Shuffle(new Random(), spawnData.CoordsAndType);
+                Shuffle(new Random(), spawnData.ReaperCoords);
+                Shuffle(new Random(), spawnData.GhostCoordsAndType);
             }
 
-            for (int i = 0; i < spawnTotal; i++)
+            //load reaper spawns
+            for(int i = 0; i < reaperSpawnTotal; i++)
+            {
+                Logger.Log(Logger.Level.Info, $"Reaper spawn #{i + 1} - Coords: {spawnData.ReaperCoords[i][0]} {spawnData.ReaperCoords[i][1]} {spawnData.ReaperCoords[i][2]}");
+                CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, new UnityEngine.Vector3(spawnData.ReaperCoords[i][0], spawnData.ReaperCoords[i][1], spawnData.ReaperCoords[i][2])));
+            }
+
+            //load ghost spawns
+            for (int i = 0; i < ghostSpawnTotal; i++)
             {
                 TechType creatureType = new TechType();
-                string spawnType = "";
-                switch (spawnData.CoordsAndType[i][3])
+                string ghostType = "Adult";
+                switch (spawnData.GhostCoordsAndType[i][3])
                 {
-                    case 1://Reaper Leviathan
-                        creatureType = TechType.ReaperLeviathan;
-                        spawnType = "Reaper Leviathan";
-                        break;
-                    case 2://Ghost Leviathan
+                    case 2://Ghost (Adult)
                         creatureType = TechType.GhostLeviathan;
-                        spawnType = "Ghost Leviathan";
                         break;
-                    case 3://Ghost Leviathan (Juvenile)
+                    case 3://Ghost (Juvenile)
                         creatureType = TechType.GhostLeviathanJuvenile;
-                        spawnType = "Ghost Leviathan (Juvenile)";
+                        ghostType = "Juvenile";
                         break;
                 }
-                Logger.Log(Logger.Level.Info, $"Spawn #{i} - Type:{spawnType} - Coords: {spawnData.CoordsAndType[i][0]} {spawnData.CoordsAndType[i][1]} {spawnData.CoordsAndType[i][2]}");
-                CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(creatureType, new UnityEngine.Vector3(spawnData.CoordsAndType[i][0], spawnData.CoordsAndType[i][1], spawnData.CoordsAndType[i][2])));
+                Logger.Log(Logger.Level.Info, $"Ghost ({ghostType}) spawn #{i + 1} - Coords: {spawnData.GhostCoordsAndType[i][0]} {spawnData.GhostCoordsAndType[i][1]} {spawnData.GhostCoordsAndType[i][2]}");
+                CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(creatureType, new UnityEngine.Vector3(spawnData.GhostCoordsAndType[i][0], spawnData.GhostCoordsAndType[i][1], spawnData.GhostCoordsAndType[i][2])));
             }
-    }
+        }
 
         public static void Shuffle(Random random, float[][] arr)
         {
@@ -118,33 +128,37 @@ namespace MoreLeviathanSpawns
     [Serializable]
     public class SpawnData
     { 
-        public float Intensity = 1;
+        public float ReaperSpawnIntensity = 1;
+        public float GhostSpawnIntensity = 1;
         public bool AlwaysRandomized = false;
-        public float[][] CoordsAndType =
+        public float[][] ReaperCoords =
         {
-            new float[]{ 120, -40, -568, 1 },
-            new float[]{ 1407, -190, 584, 1 },
-            new float[]{ 278, -175, 1398, 1 },
-            new float[]{ -811, -240, -1240, 1 },
-            new float[]{ -442, -132, -912, 1 },
-            new float[]{ -310, -45, 92, 1 },
-            new float[]{ 190, -52, 477, 1 },
-            new float[]{ 500, -98, 318, 1 },
-            new float[]{ 680, -85, 331, 1 },
-            new float[]{ -172, -70, -781, 1 },
-            new float[]{ -692, -130, -725, 1 },
-            new float[]{ -745, -80, -1050, 1 },
-            new float[]{ -278, -30, -621, 1 },
-            new float[]{ -295, -45, -350, 1 },
-            new float[]{ -516, -110, 531, 1 },
-            new float[]{ -815, -68, 316, 1 },
-            new float[]{ -531, -60, -175, 1 },
-            new float[]{ -250, -142, 906, 1 },
-            new float[]{ -1122, -113, 710, 1 },
-            new float[]{ -1190, -102, -527, 1 },
-            new float[]{ -754, -102, 1334, 1 },
-            new float[]{ 432, -65, 690, 1 },
-            new float[]{ 383, -60, 40, 1 },
+            new float[]{ 120, -40, -568 },
+            new float[]{ 1407, -190, 584 },
+            new float[]{ 278, -175, 1398 },
+            new float[]{ -811, -240, -1240 },
+            new float[]{ -442, -132, -912 },
+            new float[]{ -310, -45, 92 },
+            new float[]{ 190, -52, 477 },
+            new float[]{ 500, -98, 318 },
+            new float[]{ 680, -85, 331 },
+            new float[]{ -172, -70, -781 },
+            new float[]{ -692, -130, -725 },
+            new float[]{ -745, -80, -1050 },
+            new float[]{ -278, -30, -621 },
+            new float[]{ -295, -45, -350 },
+            new float[]{ -516, -110, 531 },
+            new float[]{ -815, -68, 316 },
+            new float[]{ -531, -60, -175 },
+            new float[]{ -250, -142, 906 },
+            new float[]{ -1122, -113, 710 },
+            new float[]{ -1190, -102, -527 },
+            new float[]{ -754, -102, 1334 },
+            new float[]{ 432, -65, 690 },
+            new float[]{ 383, -60, 40 }
+        };
+        public float[][] GhostCoordsAndType =
+        {
             new float[]{ -284, -293, 1100, 2 },
             new float[]{ 1065, -211, 466, 2 },
             new float[]{ 876, -122, 881, 2 },
