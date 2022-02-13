@@ -65,8 +65,8 @@ namespace MoreLeviathanSpawns
             Logger.Log(Logger.Level.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
             
             //this will set a general amount of spawns based on the spawn intensity the player set, defaulting to '1'
-            int reaperSpawnTotal = (int)(spawnData.ReaperCoords.Length / 3 * spawnData.ReaperSpawnIntensity);
-            int ghostSpawnTotal = (int)(spawnData.GhostCoordsAndType.Length / 3 * spawnData.GhostSpawnIntensity);
+            int reaperSpawnTotal = (int)(spawnData.ReaperCoords.Length / 6 * spawnData.ReaperSpawnIntensity);
+            int ghostSpawnTotal = (int)(spawnData.GhostCoordsAndType.Length / 6 * spawnData.GhostSpawnIntensity);
 
             Logger.Log(Logger.Level.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Length} total reaper spawns");
             Logger.Log(Logger.Level.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoordsAndType.Length} total ghost spawns");
@@ -95,10 +95,10 @@ namespace MoreLeviathanSpawns
                 string ghostType = "Adult";
                 switch (spawnData.GhostCoordsAndType[i][3])
                 {
-                    case 2://Ghost (Adult)
+                    case 1://Ghost (Adult)
                         creatureType = TechType.GhostLeviathan;
                         break;
-                    case 3://Ghost (Juvenile)
+                    case 2://Ghost (Juvenile)
                         creatureType = TechType.GhostLeviathanJuvenile;
                         ghostType = "Juvenile";
                         break;
@@ -159,20 +159,20 @@ namespace MoreLeviathanSpawns
         };
         public float[][] GhostCoordsAndType =
         {
-            new float[]{ -284, -293, 1100, 2 },
-            new float[]{ 1065, -211, 466, 2 },
-            new float[]{ 876, -122, 881, 2 },
-            new float[]{ -28, -318, 1296, 2 },
-            new float[]{ 10, -219, -220, 3 },
-            new float[]{ -396, -350, -925, 3 },
-            new float[]{ -958, -300, -540, 3 },
-            new float[]{ -988, -885, 400, 3 },
-            new float[]{ -695, -478, -993, 3 },
-            new float[]{ -618, -213, -82, 3 },
-            new float[]{ -34, -400, 926, 3 },
-            new float[]{ -196, -436, 1056, 3 },
-            new float[]{ 1443, -260, 883, 3 },
-            new float[]{ 1075, -475, 944, 3 }
+            new float[]{ -284, -293, 1100, 1 },
+            new float[]{ 1065, -211, 466, 1 },
+            new float[]{ 876, -122, 881, 1 },
+            new float[]{ -28, -318, 1296, 1 },
+            new float[]{ 10, -219, -220, 2 },
+            new float[]{ -396, -350, -925, 2 },
+            new float[]{ -958, -300, -540, 2 },
+            new float[]{ -988, -885, 400, 2 },
+            new float[]{ -695, -478, -993, 2 },
+            new float[]{ -618, -213, -82, 2 },
+            new float[]{ -34, -400, 926, 2 },
+            new float[]{ -196, -436, 1056, 2 },
+            new float[]{ 1443, -260, 883, 2 },
+            new float[]{ 1075, -475, 944, 2 }
         };
     }
 }
