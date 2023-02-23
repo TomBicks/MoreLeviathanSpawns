@@ -39,9 +39,9 @@ namespace MoreLeviathanSpawns
             SpawnData spawnData = new SpawnData();
 
             //Get values from whatever the player selected from the mod menu
-            spawnData.AlwaysRandomized = Config.AlwaysRandomized;
-            spawnData.ReaperSpawnIntensity = Config.ReaperSpawnIntensity;
-            spawnData.GhostSpawnIntensity = Config.GhostSpawnIntensity;
+            spawnData.AlwaysRandomized = config.AlwaysRandomized;
+            spawnData.ReaperSpawnIntensity = config.ReaperSpawnIntensity;
+            spawnData.GhostSpawnIntensity = config.GhostSpawnIntensity;
 
             //Shuffle 2D array of coordinates. Depending on how many spawns the player wants in the game (set via
             //the in-game mod menu), spawn in that many creatures starting from the top of the 2D array.
@@ -59,25 +59,25 @@ namespace MoreLeviathanSpawns
 
         static void SpawnCreatures(string filepath)
         {
-            var spawnData = new SpawnData();
-            var alwaysRandomized = Config.AlwaysRandomized;
-            var reaperSpawnIntensity = Config.ReaperSpawnIntensity;
-            var ghostSpawnIntensity = Config.GhostSpawnIntensity;
+            SpawnData spawnData = new SpawnData();
+            spawnData.AlwaysRandomized = config.AlwaysRandomized;
+            spawnData.ReaperSpawnIntensity = config.ReaperSpawnIntensity;
+            spawnData.GhostSpawnIntensity = config.GhostSpawnIntensity;
 
-            logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {reaperSpawnIntensity}");
-            logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {ghostSpawnIntensity}");
+            logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {spawnData.ReaperSpawnIntensity}");
+            logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
 
             //this will set a general amount of spawns based on the spawn intensity the player set, defaulting to '3'
-            int reaperSpawnTotal = (int)(spawnData.ReaperCoords.Length / 6 * reaperSpawnIntensity);
-            int ghostSpawnTotal = (int)(spawnData.GhostCoordsAndType.Length / 6 * ghostSpawnIntensity);
+            int reaperSpawnTotal = (int)(spawnData.ReaperCoords.Length / 6 * spawnData.ReaperSpawnIntensity);
+            int ghostSpawnTotal = (int)(spawnData.GhostCoordsAndType.Length / 6 * spawnData.GhostSpawnIntensity);
 
             logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Length} total reaper spawns");
             logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoordsAndType.Length} total ghost spawns");
 
             //if player opted for spanws to always be random, simply shuffle the spawn coordinates 2D array,
             //defaulting to 'false'
-            logger.Log(LogLevel.Info, $"Alway randomized is set to: {alwaysRandomized}");
-            if (alwaysRandomized)
+            logger.Log(LogLevel.Info, $"Alway randomized is set to: {spawnData.AlwaysRandomized}");
+            if (spawnData.AlwaysRandomized)
             {
                 logger.Log(LogLevel.Info, $"shuffling (randomizing) spawns...");
                 Shuffle(new Random(), spawnData.ReaperCoords);
