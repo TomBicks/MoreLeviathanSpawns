@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using BepInEx.Logging;
 using SMLHelper.V2.Handlers;
@@ -11,10 +12,53 @@ namespace MoreLeviathanSpawns
     [HarmonyPatch]
     internal class SpawnMoreLeviathans_SN
     {
+        [HarmonyPatch(typeof(Creature), nameof(Creature.Start))]
+        [HarmonyPrefix]
+        public static void PrefixCreatureAwake(HandTarget __instance)
+        {
+            logger.Log(LogLevel.Info, "Prefix Test");
+            CleanDuplicates();
+        }
+
+        public static void CleanDuplicates()
+        {
+            logger.Log(LogLevel.Info, "Cleaning Test");
+
+            /*//This *nonsense* is required to get around the duplication bug.
+			HashSet<GameObject> toDestroy = new();
+			Dictionary<string, int> found = new();
+			foreach (Collider someCollider in Physics.OverlapSphere(Camera.main.transform.position, 50f))
+			{
+				if (someCollider.gameObject.GetComponent<SupplyCrate>())
+				{
+					if (someCollider.GetComponent<PrefabIdentifier>().Id == "")
+					{
+						if (found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id) && !found.ContainsValue(someCollider.gameObject.GetInstanceID()))
+						{
+							toDestroy.Add(someCollider.gameObject);
+						}
+						else
+						{
+							if (!found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id))
+							{
+								found.Add(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id, someCollider.gameObject.GetInstanceID());
+							}
+						}
+					}
+				}
+				foreach (GameObject someGameObject in toDestroy)
+				{
+					MainLogicLoop.DebugWrite($"Destroying duplicate on {someGameObject.GetComponent<PrefabIdentifier>().Id}");
+					GameObject.Destroy(someGameObject.gameObject);
+				}
+			}*/
+        }
+
         [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
+            logger.Log(LogLevel.Info, "Initial Test");
             // Check to see if this is the player
             if (__instance.GetType() == typeof(Player))
             {
