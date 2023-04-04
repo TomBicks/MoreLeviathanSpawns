@@ -8,10 +8,10 @@ using System.Xml.Serialization;
 
 namespace MoreLeviathanSpawns
 {
-    [HarmonyPatch(typeof(Player))]
+    [HarmonyPatch]
     internal class SpawnMoreLeviathans_SN
     {
-        [HarmonyPatch("Awake")]
+        [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
@@ -176,7 +176,7 @@ namespace MoreLeviathanSpawns
             new float[]{ -34, -400, 926, 2 }, //Juvenile, Underwater Islands, North
             new float[]{ -196, -436, 1056, 2 }, //Juvenile, Underwater Islands, North
             new float[]{ 1443, -260, 883, 2 }, //Juvenile, Bulb Zone, North-East
-            new float[]{ 1075, -475, 944, 2 } //Juvenile, Mountains, North-East (Lost River Entrance),
+            new float[]{ 1075, -475, 944, 2 } //Juvenile, Mountains, North-East (Lost River Entrance)
         };
     }
 }
