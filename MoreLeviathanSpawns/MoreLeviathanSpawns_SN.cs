@@ -46,8 +46,8 @@ namespace MoreLeviathanSpawns
             //Shuffle 2D array of coordinates. Depending on how many spawns the player wants in the game (set via
             //the in-game mod menu), spawn in that many creatures starting from the top of the 2D array.
 
-            Shuffle(new Random(), spawnData.ReaperCoords);
-            Shuffle(new Random(), spawnData.GhostCoordsAndType);
+            Shuffle(spawnData.ReaperCoords);
+            Shuffle(spawnData.GhostCoordsAndType);
 
             //create the XML file
             XmlSerializer writer = new XmlSerializer(typeof(SpawnData));
@@ -80,8 +80,8 @@ namespace MoreLeviathanSpawns
             if (spawnData.AlwaysRandomized)
             {
                 logger.Log(LogLevel.Info, $"shuffling (randomizing) spawns...");
-                Shuffle(new Random(), spawnData.ReaperCoords);
-                Shuffle(new Random(), spawnData.GhostCoordsAndType);
+                Shuffle(spawnData.ReaperCoords);
+                Shuffle(spawnData.GhostCoordsAndType);
             }
 
             //load reaper spawns
@@ -112,7 +112,7 @@ namespace MoreLeviathanSpawns
             }
         }
 
-        public static void Shuffle(Random random, float[][] arr)
+        public static void Shuffle(float[][] arr)
         {
             Random rnd = new Random();
             for (int i = arr.Length - 1; i >= 1; i--)
