@@ -6,6 +6,8 @@ using BepInEx.Logging;
 using SMLHelper.V2.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
 using System.Xml.Serialization;
+using UnityEngine;
+//using UnityEngine.PhysicsModule;
 
 namespace MoreLeviathanSpawns
 {
@@ -14,51 +16,106 @@ namespace MoreLeviathanSpawns
     {
         [HarmonyPatch(typeof(Creature), nameof(Creature.Start))]
         [HarmonyPrefix]
-        public static void PrefixCreatureAwake(HandTarget __instance)
+        public static void PrefixCreatureStart(Creature __instance)
         {
-            logger.Log(LogLevel.Info, "Prefix Test");
             CleanDuplicates();
         }
 
+        //My CleanDuplicates Test
+        /*public static void CleanDuplicates(Creature instance)
+        {
+            //logger.Log(LogLevel.Info, "Cleaning Test");
+
+            if (instance.gameObject.GetComponent<ReaperLeviathan>())
+            {
+                //Courtesy of jet082; much obliged!
+                //This *nonsense* is required to get around the duplication bug.
+                HashSet<GameObject> toDestroy = new HashSet<GameObject>();
+                Dictionary<string, int> found = new Dictionary<string, int>();
+
+                logger.Log(LogLevel.Info, $"Seeker, PrefabID = {instance.gameObject.GetComponent<PrefabIdentifier>().Id}, InstanceID = {instance.gameObject.GetInstanceID()}");
+
+                //NOTE!! This sphere check for colliders seems to include itself, so that's why we must add them to a list first; first one is ok, second one onwards is getting deleted
+                foreach (Collider someCollider in Physics.OverlapSphere(instance.transform.position, 50f))
+                {
+                    if (someCollider.gameObject.GetComponent<GhostLeviathan>())
+                    {
+                        logger.Log(LogLevel.Info, "Found Ghost");
+                    }
+                    if (someCollider.gameObject.GetComponent<ReaperLeviathan>())
+                    {
+                        logger.Log(LogLevel.Info, "Found Reaper");
+                        logger.Log(LogLevel.Info, $"Reaper, PrefabID = {someCollider.gameObject.GetComponent<PrefabIdentifier>().Id}, InstanceID = {someCollider.gameObject.GetInstanceID()}");
+                        //Original Code
+                        if (someCollider.GetComponent<PrefabIdentifier>().Id != "")
+                        {
+                            logger.Log(LogLevel.Info, "Is PrefabID (string) already in found and yet this creature( (int) is not in found?");
+                            if (found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id) && !found.ContainsValue(someCollider.gameObject.GetInstanceID()))
+                            {
+                                logger.Log(LogLevel.Info, "Yes, which means if the ID is already here but the creature isn't, then it's a duplicate.");
+                                toDestroy.Add(someCollider.gameObject);
+                            }
+                            else
+                            {
+                                logger.Log(LogLevel.Info, "No; Is PrefabID (string) not already in found?");
+                                if (!found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id))
+                                {
+                                    logger.Log(LogLevel.Info, "Yes, then add it and its instanceID to found.");
+                                    found.Add(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id, someCollider.gameObject.GetInstanceID());
+                                }
+                            }
+                        }
+                    }
+                    foreach (GameObject someGameObject in toDestroy)
+                    {
+                        logger.Log(LogLevel.Info, "Deleting Duplicate Reaper");
+                        logger.Log(LogLevel.Info, $"Destroying duplicate on {someGameObject.GetComponent<PrefabIdentifier>().Id}");
+                        GameObject.Destroy(someGameObject.gameObject);
+                    }
+                }
+                logger.Log(LogLevel.Info, "-----");
+            }
+        }*/
+
+        //jet082's CleanDuplicates Test
         public static void CleanDuplicates()
         {
-            logger.Log(LogLevel.Info, "Cleaning Test");
-
-            /*//This *nonsense* is required to get around the duplication bug.
-			HashSet<GameObject> toDestroy = new();
-			Dictionary<string, int> found = new();
-			foreach (Collider someCollider in Physics.OverlapSphere(Camera.main.transform.position, 50f))
-			{
-				if (someCollider.gameObject.GetComponent<SupplyCrate>())
-				{
-					if (someCollider.GetComponent<PrefabIdentifier>().Id == "")
-					{
-						if (found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id) && !found.ContainsValue(someCollider.gameObject.GetInstanceID()))
-						{
-							toDestroy.Add(someCollider.gameObject);
-						}
-						else
-						{
-							if (!found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id))
-							{
-								found.Add(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id, someCollider.gameObject.GetInstanceID());
-							}
-						}
-					}
-				}
-				foreach (GameObject someGameObject in toDestroy)
-				{
-					MainLogicLoop.DebugWrite($"Destroying duplicate on {someGameObject.GetComponent<PrefabIdentifier>().Id}");
-					GameObject.Destroy(someGameObject.gameObject);
-				}
-			}*/
+            //This *nonsense* is required to get around the duplication bug.
+            HashSet<GameObject> toDestroy = new HashSet<GameObject>();
+            Dictionary<string, int> found = new Dictionary<string, int>();
+            foreach (Collider someCollider in Physics.OverlapSphere(Camera.main.transform.position, 50f))
+            {
+                if (someCollider.gameObject.GetComponent<ReaperLeviathan>())
+                {
+                    logger.Log(LogLevel.Info, "Reaper Found; do we have its Prefab ID but not its Instance ID?");
+                    if (found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id) && !found.ContainsValue(someCollider.gameObject.GetInstanceID()))
+                    {
+                        logger.Log(LogLevel.Info, "Yes; it's a clone, destroy it");
+                        toDestroy.Add(someCollider.gameObject);
+                    }
+                    else
+                    {
+                        logger.Log(LogLevel.Info, "No; Is its Prefab ID in the list?");
+                        if (!found.ContainsKey(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id))
+                        {
+                            logger.Log(LogLevel.Info, "No; add Prefab ID and Instance ID to list");
+                            found.Add(someCollider.gameObject.GetComponent<PrefabIdentifier>().Id, someCollider.gameObject.GetInstanceID());
+                        }
+                    }
+                    logger.Log(LogLevel.Info, "-----");
+                }
+                foreach (GameObject someGameObject in toDestroy)
+                {
+                    logger.Log(LogLevel.Info, $"Destroying duplicate Reaper on {someGameObject.GetComponent<PrefabIdentifier>().Id}");
+                    GameObject.Destroy(someGameObject.gameObject);
+                }
+            }
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
-            logger.Log(LogLevel.Info, "Initial Test");
             // Check to see if this is the player
             if (__instance.GetType() == typeof(Player))
             {
@@ -158,7 +215,7 @@ namespace MoreLeviathanSpawns
 
         public static void Shuffle(float[][] arr)
         {
-            Random rnd = new Random();
+            System.Random rnd = new System.Random();
             for (int i = arr.Length - 1; i >= 1; i--)
             {
                 // Random.Next generates numbers between min and max - 1 value, so we have to balance this
