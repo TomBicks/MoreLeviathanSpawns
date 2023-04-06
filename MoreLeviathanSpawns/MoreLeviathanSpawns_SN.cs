@@ -1,12 +1,10 @@
 ﻿using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using BepInEx.Logging;
 using SMLHelper.V2.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
 using System.Xml.Serialization;
-using UnityEngine;
 
 namespace MoreLeviathanSpawns
 {
