@@ -8,10 +8,10 @@ using System.Xml.Serialization;
 
 namespace MoreLeviathanSpawns
 {
-    [HarmonyPatch(typeof(Player))]
+    [HarmonyPatch]
     internal class SpawnMoreLeviathans_SN
     {
-        [HarmonyPatch("Awake")]
+        [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
@@ -46,8 +46,8 @@ namespace MoreLeviathanSpawns
             //Shuffle 2D array of coordinates. Depending on how many spawns the player wants in the game (set via
             //the in-game mod menu), spawn in that many creatures starting from the top of the 2D array.
 
-            Shuffle(new Random(), spawnData.ReaperCoords);
-            Shuffle(new Random(), spawnData.GhostCoordsAndType);
+            Shuffle(spawnData.ReaperCoords);
+            Shuffle(spawnData.GhostCoordsAndType);
 
             //create the XML file
             XmlSerializer writer = new XmlSerializer(typeof(SpawnData));
@@ -68,8 +68,8 @@ namespace MoreLeviathanSpawns
             logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
 
             //this will set a general amount of spawns based on the spawn intensity the player set, defaulting to '3'
-            int reaperSpawnTotal = (int)(spawnData.ReaperCoords.Length / 6 * spawnData.ReaperSpawnIntensity);
-            int ghostSpawnTotal = (int)(spawnData.GhostCoordsAndType.Length / 6 * spawnData.GhostSpawnIntensity);
+            int reaperSpawnTotal = (int)(spawnData.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Length);
+            int ghostSpawnTotal = (int)(spawnData.GhostSpawnIntensity / 6 * spawnData.GhostCoordsAndType.Length);
 
             logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Length} total reaper spawns");
             logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoordsAndType.Length} total ghost spawns");
@@ -80,8 +80,8 @@ namespace MoreLeviathanSpawns
             if (spawnData.AlwaysRandomized)
             {
                 logger.Log(LogLevel.Info, $"shuffling (randomizing) spawns...");
-                Shuffle(new Random(), spawnData.ReaperCoords);
-                Shuffle(new Random(), spawnData.GhostCoordsAndType);
+                Shuffle(spawnData.ReaperCoords);
+                Shuffle(spawnData.GhostCoordsAndType);
             }
 
             //load reaper spawns
@@ -112,9 +112,9 @@ namespace MoreLeviathanSpawns
             }
         }
 
-        public static void Shuffle(Random random, float[][] arr)
+        public static void Shuffle(float[][] arr)
         {
-            Random rnd = new Random();
+            System.Random rnd = new System.Random();
             for (int i = arr.Length - 1; i >= 1; i--)
             {
                 // Random.Next generates numbers between min and max - 1 value, so we have to balance this
@@ -137,46 +137,46 @@ namespace MoreLeviathanSpawns
         public float GhostSpawnIntensity = 3;
         public float[][] ReaperCoords =
         {
-            new float[]{ 120, -40, -568 },
-            new float[]{ 1407, -190, 584 },
-            new float[]{ 278, -175, 1398 },
-            new float[]{ -811, -240, -1240 },
-            new float[]{ -442, -132, -912 },
-            new float[]{ -310, -45, 92 },
-            new float[]{ 190, -52, 477 },
-            new float[]{ 500, -98, 318 },
-            new float[]{ 680, -85, 331 },
-            new float[]{ -172, -70, -781 },
-            new float[]{ -692, -130, -725 },
-            new float[]{ -745, -80, -1050 },
-            new float[]{ -278, -30, -621 },
-            new float[]{ -295, -45, -350 },
-            new float[]{ -516, -110, 531 },
-            new float[]{ -815, -68, 316 },
-            new float[]{ -531, -60, -175 },
-            new float[]{ -250, -142, 906 },
-            new float[]{ -1122, -113, 710 },
-            new float[]{ -1190, -102, -527 },
-            new float[]{ -754, -102, 1334 },
-            new float[]{ 432, -65, 690 },
-            new float[]{ 383, -60, 40 }
+            new float[]{ 120, -40, -568 }, //Grassy Plateaus, South
+            new float[]{ 1407, -190, 584 }, //Bulb Zone, East-North-East
+            new float[]{ 278, -175, 1398 }, //Mountains, North
+            new float[]{ -811, -240, -1240 }, //Grand Reef, South-South-West
+            new float[]{ -442, -132, -912 }, //Grand Reef, South
+            new float[]{ -310, -45, 92 }, //Kelp Forest, West
+            new float[]{ 190, -52, 477 }, //Kelp Forest, North
+            new float[]{ 500, -98, 318 }, //Mushroom Forest, East
+            new float[]{ 680, -85, 331 }, //Mushroom Forest, East
+            new float[]{ -172, -70, -781 }, //Crag Field, South
+            new float[]{ -692, -130, -725 }, //Sparse Reef, South-West
+            new float[]{ -745, -80, -1050 }, //Grand Reef, South-South-West (Under Floating Island)
+            new float[]{ -278, -30, -621 }, //Kelp Forest, South
+            new float[]{ -295, -45, -350 }, //Grassy Plateaus, South-West
+            new float[]{ -516, -110, 531 }, //Mushroom Forest, North-West
+            new float[]{ -815, -68, 316 }, //Mushroom Forest, West-North-West
+            new float[]{ -531, -60, -175 }, //Grassy Plateaus, West
+            new float[]{ -250, -142, 906 }, //Underwater Islands, North
+            new float[]{ -1122, -113, 710 }, //Mushroom Forest, North-West
+            new float[]{ -1190, -102, -527 }, //Sea Treader's Path, West-South-West
+            new float[]{ -754, -102, 1334 }, //Blood Kelp Zone, North-North-West
+            new float[]{ 432, -65, 690 }, //Kelp Forest, North-North-East
+            new float[]{ 383, -60, 40 } //Grassy Plateaus, East
         };
         public float[][] GhostCoordsAndType =
         {
-            new float[]{ -284, -293, 1100, 1 },
-            new float[]{ 1065, -211, 466, 1 },
-            new float[]{ 876, -122, 881, 1 },
-            new float[]{ -28, -318, 1296, 1 },
-            new float[]{ 10, -219, -220, 2 },
-            new float[]{ -396, -350, -925, 2 },
-            new float[]{ -958, -300, -540, 2 },
-            new float[]{ -988, -885, 400, 2 },
-            new float[]{ -695, -478, -993, 2 },
-            new float[]{ -618, -213, -82, 2 },
-            new float[]{ -34, -400, 926, 2 },
-            new float[]{ -196, -436, 1056, 2 },
-            new float[]{ 1443, -260, 883, 2 },
-            new float[]{ 1075, -475, 944, 2 }
+            new float[]{ -284, -293, 1100, 1 }, //Adult, Underwater Islands, North
+            new float[]{ 1065, -211, 466, 1 }, //Adult, Bulb Zone, East-North-East
+            new float[]{ 876, -122, 881, 1 }, //Adult, Bulb Zone, North-East
+            new float[]{ -28, -318, 1296, 1 }, //Adult, Mountains, North
+            new float[]{ 10, -219, -220, 2 }, //Juvenile, Jellyshroom Cave, South
+            new float[]{ -396, -350, -925, 2 }, //Juvenile, Grand Reef, South
+            new float[]{ -958, -300, -540, 2 }, //Juvenile, Blood Kelp Trench, South-West
+            new float[]{ -988, -885, 400, 2 }, //Juvenile, Lost River, West-North-West (Tree Cove)
+            new float[]{ -695, -478, -993, 2 }, //Juvenile, Grand Reef, South-South-West (Degasi Base)
+            new float[]{ -618, -213, -82, 2 }, //Juvenile, Jellyshroom Cave, West
+            new float[]{ -34, -400, 926, 2 }, //Juvenile, Underwater Islands, North
+            new float[]{ -196, -436, 1056, 2 }, //Juvenile, Underwater Islands, North
+            new float[]{ 1443, -260, 883, 2 }, //Juvenile, Bulb Zone, North-East
+            new float[]{ 1075, -475, 944, 2 } //Juvenile, Mountains, North-East (Lost River Entrance)
         };
     }
 }
