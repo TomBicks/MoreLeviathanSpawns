@@ -1,10 +1,8 @@
 ﻿using HarmonyLib;
-using System;
-using System.IO;
+//using System;
 using BepInEx.Logging;
 using Nautilus.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
-using System.Xml.Serialization;
 
 namespace MoreLeviathanSpawns
 {
@@ -18,7 +16,7 @@ namespace MoreLeviathanSpawns
             // Check to see if this is the player
             if (__instance.GetType() == typeof(Player))
             {
-                string filepath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "spawnData.xml");
+                /*string filepath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "spawnData.xml");
                 logger.Log(LogLevel.Info, "Save file location" + SaveLoadManager.GetTemporarySavePath());
 
                 if (!File.Exists(filepath))
@@ -29,12 +27,12 @@ namespace MoreLeviathanSpawns
                 else
                 {
                     logger.Log(LogLevel.Info, "XML file found. Loading spawns from file...");
-                }
-                SpawnCreatures(filepath);
+                }*/
+                SpawnCreatures();
             }
         }
 
-        static void CreateXMLFile(string filepath)
+        /*static void CreateXMLFile(string filepath)
         {
             //SpawnData spawnData = new SpawnData();
 
@@ -59,9 +57,10 @@ namespace MoreLeviathanSpawns
             writer.Serialize(file, spawnData);
             file.Close();
             logger.Log(LogLevel.Info, $"xml file path: {filepath}");
-        }
+        }*/
 
-        static void SpawnCreatures(string filepath)
+        //NOTE!! File is no longer required for this mod, meaning we can ditch the file serializer and thus rmeove the unnecassary file creation in TempData
+        static void SpawnCreatures()
         {
             SpawnData spawnData = new SpawnData();
             spawnData.AlwaysRandomized = config.AlwaysRandomized;
@@ -133,7 +132,8 @@ namespace MoreLeviathanSpawns
             }
         }
     }
-    [Serializable]
+    //[Serializable]
+    //Given these are static, could make it something other than an entire class?
     public class SpawnData
     {
         public bool AlwaysRandomized = false;
