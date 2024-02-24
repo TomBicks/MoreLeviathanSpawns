@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using BepInEx.Logging;
-using SMLHelper.V2.Handlers;
+using Nautilus.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
 using System.Xml.Serialization;
 
@@ -36,12 +36,16 @@ namespace MoreLeviathanSpawns
 
         static void CreateXMLFile(string filepath)
         {
-            SpawnData spawnData = new SpawnData();
+            //SpawnData spawnData = new SpawnData();
 
-            //Get values from whatever the player selected from the mod menu
-            spawnData.AlwaysRandomized = config.AlwaysRandomized;
-            spawnData.ReaperSpawnIntensity = config.ReaperSpawnIntensity;
-            spawnData.GhostSpawnIntensity = config.GhostSpawnIntensity;
+            //NOTE!! This way might work a little faster? A little neater? Test!
+            SpawnData spawnData = new SpawnData
+            {
+                //Get values from whatever the player selected from the mod menu
+                AlwaysRandomized = config.AlwaysRandomized,
+                ReaperSpawnIntensity = config.ReaperSpawnIntensity,
+                GhostSpawnIntensity = config.GhostSpawnIntensity
+            };
 
             //Shuffle 2D array of coordinates. Depending on how many spawns the player wants in the game (set via
             //the in-game mod menu), spawn in that many creatures starting from the top of the 2D array.

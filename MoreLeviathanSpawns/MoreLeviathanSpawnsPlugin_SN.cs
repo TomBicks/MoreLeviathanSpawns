@@ -1,9 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using SMLHelper.V2.Handlers;
-using SMLHelper.V2.Options;
-using SMLHelper.V2.Options.Attributes;
+using Nautilus.Handlers;
+using Nautilus.Options.Attributes;
 
 namespace MoreLeviathanSpawns
 {
@@ -29,16 +28,19 @@ namespace MoreLeviathanSpawns
     }
 
     [Menu("More Leviathan Spawns")]
-    public class Config : SMLHelper.V2.Json.ConfigFile
+    public class Config : Nautilus.Json.ConfigFile
     {
-        [Slider("Reaper Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "reaperSpawnIntensity", Tooltip = "Defines general intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add roughly 2 - 4 spawns. A value of 6 will add roughly 20 - 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game."), OnChange(nameof(SpawnIntensityChanged))]
+        [Slider("Reaper Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "reaperSpawnIntensity", Tooltip = "Defines general intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add roughly 2 - 4 spawns. A value of 6 will add roughly 20 - 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
         public float ReaperSpawnIntensity = 3F;
-        [Slider("Ghost Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "ghostSpawnIntensity", Tooltip = "Defines general intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game."), OnChange(nameof(SpawnIntensityChanged))]
+        [Slider("Ghost Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "ghostSpawnIntensity", Tooltip = "Defines general intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
         public float GhostSpawnIntensity = 3F;
-        [Toggle("Always randomize spawns", Id = "alwaysRandomize", Tooltip = "By default, spawn locations are chosen randomly then saved and remain static for rest of playthrough. If this option is checked, spawns will always randomize when opening that save file."), OnChange(nameof(ToggleChanged))]
+        //NOTE!! How could this have possible worked, if you can't unspawn leviathans? All this would have done would randomise until all unique spawns were registered
+        //In essence, this just eventually hit the max, always.
+        //Need to either figure out if leviathans can be unregistered from the world spawn thing, or need to remove this option entirely.
+        [Toggle("Always randomize spawns?", Id = "alwaysRandomize", Tooltip = "By default, spawn locations are chosen randomly then saved and remain static for rest of playthrough. If this option is checked, spawns will always randomize when opening that save file.")]
         public bool AlwaysRandomized = false;
 
-        private void SpawnIntensityChanged(SliderChangedEventArgs e)
+        /*private void SpawnIntensityChanged(SliderChangedEventArgs e)
         {
             switch (e.Id)
             {
@@ -59,6 +61,6 @@ namespace MoreLeviathanSpawns
                     AlwaysRandomized = e.Value;
                     break;
             }
-        }
+        }*/
     }
 }
