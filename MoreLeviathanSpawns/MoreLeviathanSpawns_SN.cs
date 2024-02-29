@@ -19,21 +19,7 @@ namespace MoreLeviathanSpawns
             // Check to see if this is the player
             if (__instance.GetType() == typeof(Player))
             {
-                /*string filepath = Path.Combine(SaveLoadManager.GetTemporarySavePath(), "spawnData.xml");
-                logger.Log(LogLevel.Info, "Save file location" + SaveLoadManager.GetTemporarySavePath());
-
-                if (!File.Exists(filepath))
-                {
-                    logger.Log(LogLevel.Info, "MoreLeviathanSpawns initialised for the first time. Creating XML file...");
-                    CreateXMLFile(filepath);
-                }
-                else
-                {
-                    logger.Log(LogLevel.Info, "XML file found. Loading spawns from file...");
-                }*/
-                SpawnCreatures();
-
-                //saveCoords.Save();
+                PopulateCoordArray();
             }
         }
 
@@ -67,12 +53,14 @@ namespace MoreLeviathanSpawns
         #endregion
 
         //NOTE!! File is no longer required for this mod, meaning we can ditch the file serializer and thus rmeove the unnecassary file creation in TempData
-        static void SpawnCreatures()
+        static void PopulateCoordArray()
         {
-            SpawnData spawnData = new SpawnData();
-            //spawnData.AlwaysRandomized = config.AlwaysRandomized;
-            spawnData.ReaperSpawnIntensity = config.ReaperSpawnIntensity;
-            spawnData.GhostSpawnIntensity = config.GhostSpawnIntensity;
+            SpawnData spawnData = new SpawnData
+            {
+                //AlwaysRandomized = config.AlwaysRandomized;
+                ReaperSpawnIntensity = config.ReaperSpawnIntensity,
+                GhostSpawnIntensity = config.GhostSpawnIntensity
+            };
 
             logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {spawnData.ReaperSpawnIntensity}");
             logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
@@ -83,16 +71,6 @@ namespace MoreLeviathanSpawns
 
             logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Length} total reaper spawns");
             logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoordsAndType.Length} total ghost spawns");
-
-            //if player opted for spanws to always be random, simply shuffle the spawn coordinates 2D array,
-            //defaulting to 'false'
-            /*logger.Log(LogLevel.Info, $"Alway randomized is set to: {spawnData.AlwaysRandomized}");
-            if (spawnData.AlwaysRandomized)
-            {
-                logger.Log(LogLevel.Info, $"shuffling (randomizing) spawns...");
-                Shuffle(spawnData.ReaperCoords);
-                Shuffle(spawnData.GhostCoordsAndType);
-            }*/
 
             //load reaper spawns
             for(int i = 0; i < reaperSpawnTotal; i++)
@@ -122,7 +100,7 @@ namespace MoreLeviathanSpawns
             }
         }
 
-        public static void Shuffle(float[][] arr)
+        /*public static void Shuffle(float[][] arr)
         {
             System.Random rnd = new System.Random();
             for (int i = arr.Length - 1; i >= 1; i--)
@@ -137,7 +115,7 @@ namespace MoreLeviathanSpawns
                     arr[j] = temp;
                 }
             }
-        }
+        }*/
     }
 
     #region SpawnData

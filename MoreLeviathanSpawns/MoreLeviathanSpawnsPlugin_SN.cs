@@ -31,9 +31,12 @@ namespace MoreLeviathanSpawns
         [FileName("leviathans_coords")]
         internal class SaveCoords : SaveDataCache
         {
-            public static SaveCoords Main;
-            public UnityEngine.Vector3 ReaperCoords { get; set; }
-            public UnityEngine.Vector3 GhostCoords { get; set; }
+            public int ReaperSpawnIntensity { get; set; }
+            public int GhostSpawnIntensity { get; set; }
+
+            //public float[][] ReaperCoords { get; set; }
+            public UnityEngine.Vector3[] ReaperCoords { get; set; }
+            public UnityEngine.Vector3[] GhostCoords { get; set; }
         }
 
         public void Awake()
@@ -42,11 +45,11 @@ namespace MoreLeviathanSpawns
             Logger.LogInfo(pluginName + " " + versionString + " " + "loaded.");
             logger = Logger;
 
-            /*saveCoords.ReaperCoords = {
+            saveCoords.ReaperCoords = new Vector3[] {
                 new Vector3(120, -40, -568), //Grassy Plateaus, South
                 new Vector3(1407, -190, 584), //Bulb Zone, East-North-East
-                new Vector3(278, -175, 1398} //Mountains, North
-            };*/
+                new Vector3(278, -175, 1398) //Mountains, North
+            };
 
             //Check whether it's loading correctly
             saveCoords.OnStartedLoading += (object sender, JsonFileEventArgs e) =>
@@ -55,8 +58,21 @@ namespace MoreLeviathanSpawns
 
                 logger.LogInfo($"loading from filepath: {coords.JsonFilePath}");
 
-                logger.LogInfo($"loading reaper coords from save slot: {coords.ReaperCoords}");
-                ErrorMessage.AddMessage($"loading reaper coords from save slot: {coords.ReaperCoords}");
+                //NOTE!! [0] works to display each slot! use for loop to display them all!!!
+                logger.LogInfo($"loading reaper coords from save slot: {coords.ReaperCoords[0]}");
+                ErrorMessage.AddMessage($"loading reaper coords from save slot: {coords.ReaperCoords[0]}");
+
+                logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {coords.ReaperSpawnIntensity}");
+                logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {coords.GhostSpawnIntensity}");
+
+                if (coords.ReaperSpawnIntensity != 0)
+                {
+                    for (int i = 0; i < coords.ReaperCoords.Length; i++)
+                    {
+                        logger.Log(LogLevel.Info, $"Reaper spawn #{i + 1} - Coords: {coords.ReaperCoords[i]}");
+                        CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, coords.ReaperCoords[i]));
+                    }
+                }
             };
 
             //Display coords upon loading a save file
