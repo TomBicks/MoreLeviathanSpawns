@@ -1,8 +1,11 @@
 ﻿using HarmonyLib;
 //using System;
+//using System.IO;
 using BepInEx.Logging;
+using Nautilus.Json;
 using Nautilus.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
+//using System.Xml.Serialization;
 
 namespace MoreLeviathanSpawns
 {
@@ -29,9 +32,12 @@ namespace MoreLeviathanSpawns
                     logger.Log(LogLevel.Info, "XML file found. Loading spawns from file...");
                 }*/
                 SpawnCreatures();
+
+                //saveCoords.Save();
             }
         }
 
+        #region CreateXMLFile
         /*static void CreateXMLFile(string filepath)
         {
             //SpawnData spawnData = new SpawnData();
@@ -58,12 +64,13 @@ namespace MoreLeviathanSpawns
             file.Close();
             logger.Log(LogLevel.Info, $"xml file path: {filepath}");
         }*/
+        #endregion
 
         //NOTE!! File is no longer required for this mod, meaning we can ditch the file serializer and thus rmeove the unnecassary file creation in TempData
         static void SpawnCreatures()
         {
             SpawnData spawnData = new SpawnData();
-            spawnData.AlwaysRandomized = config.AlwaysRandomized;
+            //spawnData.AlwaysRandomized = config.AlwaysRandomized;
             spawnData.ReaperSpawnIntensity = config.ReaperSpawnIntensity;
             spawnData.GhostSpawnIntensity = config.GhostSpawnIntensity;
 
@@ -79,13 +86,13 @@ namespace MoreLeviathanSpawns
 
             //if player opted for spanws to always be random, simply shuffle the spawn coordinates 2D array,
             //defaulting to 'false'
-            logger.Log(LogLevel.Info, $"Alway randomized is set to: {spawnData.AlwaysRandomized}");
+            /*logger.Log(LogLevel.Info, $"Alway randomized is set to: {spawnData.AlwaysRandomized}");
             if (spawnData.AlwaysRandomized)
             {
                 logger.Log(LogLevel.Info, $"shuffling (randomizing) spawns...");
                 Shuffle(spawnData.ReaperCoords);
                 Shuffle(spawnData.GhostCoordsAndType);
-            }
+            }*/
 
             //load reaper spawns
             for(int i = 0; i < reaperSpawnTotal; i++)
@@ -132,6 +139,8 @@ namespace MoreLeviathanSpawns
             }
         }
     }
+
+    #region SpawnData
     //[Serializable]
     //Given these are static, could make it something other than an entire class?
     public class SpawnData
@@ -139,6 +148,7 @@ namespace MoreLeviathanSpawns
         public bool AlwaysRandomized = false;
         public float ReaperSpawnIntensity = 3;
         public float GhostSpawnIntensity = 3;
+        //23 Reaper Coordinates
         public float[][] ReaperCoords =
         {
             new float[]{ 120, -40, -568 }, //Grassy Plateaus, South
@@ -165,6 +175,7 @@ namespace MoreLeviathanSpawns
             new float[]{ 432, -65, 690 }, //Kelp Forest, North-North-East
             new float[]{ 383, -60, 40 } //Grassy Plateaus, East
         };
+        //14 Ghost Coordinates
         public float[][] GhostCoordsAndType =
         {
             new float[]{ -284, -293, 1100, 1 }, //Adult, Underwater Islands, North
@@ -183,4 +194,5 @@ namespace MoreLeviathanSpawns
             new float[]{ 1075, -475, 944, 2 } //Juvenile, Mountains, North-East (Lost River Entrance)
         };
     }
+    #endregion
 }
