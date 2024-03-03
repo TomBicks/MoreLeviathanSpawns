@@ -34,7 +34,6 @@ namespace MoreLeviathanSpawns
             public int ReaperSpawnIntensity { get; set; }
             public int GhostSpawnIntensity { get; set; }
 
-            //public float[][] ReaperCoords { get; set; }
             public UnityEngine.Vector3[] ReaperCoords { get; set; }
             public UnityEngine.Vector3[] GhostCoords { get; set; }
         }
@@ -45,11 +44,7 @@ namespace MoreLeviathanSpawns
             Logger.LogInfo(pluginName + " " + versionString + " " + "loaded.");
             logger = Logger;
 
-            saveCoords.ReaperCoords = new Vector3[] {
-                new Vector3(120, -40, -568), //Grassy Plateaus, South
-                new Vector3(1407, -190, 584), //Bulb Zone, East-North-East
-                new Vector3(278, -175, 1398) //Mountains, North
-            };
+            //saveCoords.Save();
 
             //Check whether it's loading correctly
             saveCoords.OnStartedLoading += (object sender, JsonFileEventArgs e) =>

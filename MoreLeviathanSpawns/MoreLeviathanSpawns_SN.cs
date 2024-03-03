@@ -5,6 +5,7 @@ using BepInEx.Logging;
 using Nautilus.Json;
 using Nautilus.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
+using System.Collections.Generic;
 //using System.Xml.Serialization;
 
 namespace MoreLeviathanSpawns
@@ -66,11 +67,11 @@ namespace MoreLeviathanSpawns
             logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
 
             //this will set a general amount of spawns based on the spawn intensity the player set, defaulting to '3'
-            int reaperSpawnTotal = (int)(spawnData.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Length);
-            int ghostSpawnTotal = (int)(spawnData.GhostSpawnIntensity / 6 * spawnData.GhostCoordsAndType.Length);
+            int reaperSpawnTotal = (int)(spawnData.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
+            int ghostSpawnTotal = (int)(spawnData.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
 
-            logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Length} total reaper spawns");
-            logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoordsAndType.Length} total ghost spawns");
+            logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Count} total reaper spawns");
+            logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoords.Count} total ghost spawns");
 
             //Create an array as long as the total amount of spawns that will registered
             saveCoords.ReaperCoords = new UnityEngine.Vector3[reaperSpawnTotal];
@@ -79,55 +80,38 @@ namespace MoreLeviathanSpawns
             //Used to generate random selection of spawns to add to the new save file
             System.Random rnd = new System.Random();
 
-            //Randomly select amount of reaper spawns equal to reaperSpawnTotal
+            //Randomly select reaper spawns to add to new save file, amount equal to reaperSpawnTotal
             for (int i = 0; i < reaperSpawnTotal; i++)
             {
-                int j = rnd.Next(0, spawnData.ReaperCoords.Length - 1);
-                logger.Log(LogLevel.Info, $"Random selection of Reaper Coord #{j}");
+                //Select an index of the ReaperCoords list randomly, and add that reaper coord to the new save file
+                int j = rnd.Next(0, spawnData.ReaperCoords.Count - 1);
+                logger.Log(LogLevel.Info, $"Random selection of Reaper Coord #{j + 1}");
                 logger.Log(LogLevel.Info, $"Reaper spawn #{i + 1} - Coords: {spawnData.ReaperCoords[j]}");
                 saveCoords.ReaperCoords[i] = spawnData.ReaperCoords[j];
-                //CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, new UnityEngine.Vector3(spawnData.ReaperCoords[i][0], spawnData.ReaperCoords[i][1], spawnData.ReaperCoords[i][2])));
+
+                //Remove the added reaper coord afterwards, to ensure it's not accidentally selected twice
+                spawnData.ReaperCoords.RemoveAt(j);
             }
 
-            //load ghost spawns
+            //Randomly select ghost spawns to add to new save file, amount equal to ghostSpawnTotal
             for (int i = 0; i < ghostSpawnTotal; i++)
             {
-                TechType creatureType = new TechType();
+                //DEBUG!! Log whether the ghost leviathan added is an adult or a juvenile
                 string ghostType = "Adult";
-                switch (spawnData.GhostCoordsAndType[i].GhostType)
-                {
-                    case 1://Ghost (Adult)
-                        creatureType = TechType.GhostLeviathan;
-                        break;
-                    case 2://Ghost (Juvenile)
-                        creatureType = TechType.GhostLeviathanJuvenile;
-                        ghostType = "Juvenile";
-                        break;
-                }
-                logger.Log(LogLevel.Info, $"Ghost ({ghostType}) spawn #{i + 1} - Coords: {spawnData.GhostCoordsAndType[i].Coords}");
-                //CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(creatureType, new UnityEngine.Vector3(spawnData.GhostCoordsAndType[i][0], spawnData.GhostCoordsAndType[i][1], spawnData.GhostCoordsAndType[i][2])));
+                if (spawnData.GhostCoords[i].GhostType == 2) { ghostType = "Juvenile"; }
+
+                //Select an index of the GhostCoords list randomly, and add that ghost coord to the new save file
+                int j = rnd.Next(0, spawnData.GhostCoords.Count - 1);
+                logger.Log(LogLevel.Info, $"Random selection of Ghost {ghostType} Coord #{j + 1}");
+                logger.Log(LogLevel.Info, $"Ghost ({ghostType}) spawn #{i + 1} - Coords: {spawnData.GhostCoords[j].Coords}");
+
+                //Remove the added ghost coord afterwards, to ensure it's not accidentally selected twice
+                spawnData.GhostCoords.RemoveAt(j);
             }
         }
-
-        /*public static void Shuffle(float[][] arr)
-        {
-            System.Random rnd = new System.Random();
-            for (int i = arr.Length - 1; i >= 1; i--)
-            {
-                // Random.Next generates numbers between min and max - 1 value, so we have to balance this
-                int j = rnd.Next(0, i + 1);
-
-                if (i != j)
-                {
-                    var temp = arr[i];
-                    arr[i] = arr[j];
-                    arr[j] = temp;
-                }
-            }
-        }*/
     }
 
-    public class GhostCoord
+    public class GhostCoordsAndType
     {
         public UnityEngine.Vector3 Coords { get; set; }
         //1 for "Adult", 2 for "Juvenile"
@@ -135,15 +119,14 @@ namespace MoreLeviathanSpawns
     }
 
     #region SpawnData
-    //[Serializable]
-    //Given these are static, could make it something other than an entire class?
+    //NOTE!! Given these are static, could make it something other than an entire class?
     public class SpawnData
     {
         public bool AlwaysRandomized = false;
         public float ReaperSpawnIntensity = 3;
         public float GhostSpawnIntensity = 3;
         //23 Reaper Coordinates
-        public UnityEngine.Vector3[] ReaperCoords =
+        public List<UnityEngine.Vector3> ReaperCoords = new List<UnityEngine.Vector3>
         {
             new UnityEngine.Vector3( 120, -40, -568 ), //Grassy Plateaus, South
             new UnityEngine.Vector3( 1407, -190, 584 ), //Bulb Zone, East-North-East
@@ -170,23 +153,23 @@ namespace MoreLeviathanSpawns
             new UnityEngine.Vector3( 383, -60, 40 ) //Grassy Plateaus, East
         };
         //14 Ghost Coordinates
-        public GhostCoord[] GhostCoordsAndType =
+        public List<GhostCoordsAndType> GhostCoords = new List<GhostCoordsAndType>
         {
             //NOTE!! Should I be using "new int 1"?
-            new GhostCoord { Coords = new UnityEngine.Vector3( -284, -293, 1100 ), GhostType = 1 }, //Adult, Underwater Islands, North
-            new GhostCoord { Coords = new UnityEngine.Vector3( 1065, -211, 466 ), GhostType = 1 }, //Adult, Bulb Zone, East-North-East
-            new GhostCoord { Coords = new UnityEngine.Vector3( 876, -122, 881 ), GhostType = 1 }, //Adult, Bulb Zone, North-East
-            new GhostCoord { Coords = new UnityEngine.Vector3( -28, -318, 1296 ), GhostType = 1 }, //Adult, Mountains, North
-            new GhostCoord { Coords = new UnityEngine.Vector3( 10, -219, -220 ), GhostType = 2 }, //Juvenile, Jellyshroom Cave, South
-            new GhostCoord { Coords = new UnityEngine.Vector3( -396, -350, -925 ), GhostType = 2 }, //Juvenile, Grand Reef, South
-            new GhostCoord { Coords = new UnityEngine.Vector3( -958, -300, -540 ), GhostType = 2 }, //Juvenile, Blood Kelp Trench, South-West
-            new GhostCoord { Coords = new UnityEngine.Vector3( -988, -885, 400 ), GhostType = 2 }, //Juvenile, Lost River, West-North-West (Tree Cove)
-            new GhostCoord { Coords = new UnityEngine.Vector3( -695, -478, -993 ), GhostType = 2 }, //Juvenile, Grand Reef, South-South-West (Degasi Base)
-            new GhostCoord { Coords = new UnityEngine.Vector3( -618, -213, -82 ), GhostType = 2 }, //Juvenile, Jellyshroom Cave, West
-            new GhostCoord { Coords = new UnityEngine.Vector3( -34, -400, 926 ), GhostType = 2 }, //Juvenile, Underwater Islands, North
-            new GhostCoord { Coords = new UnityEngine.Vector3( -196, -436, 1056 ), GhostType = 2 }, //Juvenile, Underwater Islands, North
-            new GhostCoord { Coords = new UnityEngine.Vector3( 1443, -260, 883 ), GhostType = 2 }, //Juvenile, Bulb Zone, North-East
-            new GhostCoord { Coords = new UnityEngine.Vector3( 1075, -475, 944 ), GhostType = 2 } //Juvenile, Mountains, North-East (Lost River Entrance)
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -284, -293, 1100 ), GhostType = 1 }, //Adult, Underwater Islands, North
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( 1065, -211, 466 ), GhostType = 1 }, //Adult, Bulb Zone, East-North-East
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( 876, -122, 881 ), GhostType = 1 }, //Adult, Bulb Zone, North-East
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -28, -318, 1296 ), GhostType = 1 }, //Adult, Mountains, North
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( 10, -219, -220 ), GhostType = 2 }, //Juvenile, Jellyshroom Cave, South
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -396, -350, -925 ), GhostType = 2 }, //Juvenile, Grand Reef, South
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -958, -300, -540 ), GhostType = 2 }, //Juvenile, Blood Kelp Trench, South-West
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -988, -885, 400 ), GhostType = 2 }, //Juvenile, Lost River, West-North-West (Tree Cove)
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -695, -478, -993 ), GhostType = 2 }, //Juvenile, Grand Reef, South-South-West (Degasi Base)
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -618, -213, -82 ), GhostType = 2 }, //Juvenile, Jellyshroom Cave, West
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -34, -400, 926 ), GhostType = 2 }, //Juvenile, Underwater Islands, North
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( -196, -436, 1056 ), GhostType = 2 }, //Juvenile, Underwater Islands, North
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( 1443, -260, 883 ), GhostType = 2 }, //Juvenile, Bulb Zone, North-East
+            new GhostCoordsAndType { Coords = new UnityEngine.Vector3( 1075, -475, 944 ), GhostType = 2 } //Juvenile, Mountains, North-East (Lost River Entrance)
         };
     }
     #endregion
