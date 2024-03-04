@@ -36,7 +36,7 @@ namespace MoreLeviathanSpawns
             public int ReaperSpawnIntensity { get; set; }
             public int GhostSpawnIntensity { get; set; }
 
-            public List<UnityEngine.Vector3> ReaperCoords { get; set; }
+            public List<Vector3> ReaperCoords { get; set; }
             public List<GhostCoordsAndType> GhostCoords { get; set; }
         }
 
@@ -46,15 +46,26 @@ namespace MoreLeviathanSpawns
             Logger.LogInfo(pluginName + " " + versionString + " " + "loaded.");
             logger = Logger;
 
-            //saveCoords.Save();
-
-            //Check whether it's loading correctly
+            /*OnStartLoading, check whether the coord file has null values;
+             - if it does, it means the save and coord files are being created for the first time and that we need
+               to populate the coord file with a random selection of leviathan coordinates, based on the intensity selected
+             - if it doesn't have null values, it means this is not the first time the save has been loaded and we can skip
+               the process of populating the coord file with levaithan coordinates*/
             saveCoords.OnStartedLoading += (object sender, JsonFileEventArgs e) =>
             {
                 SaveCoords coords = e.Instance as SaveCoords;
 
-                try { logger.LogInfo($"loading from filepath: {coords.JsonFilePath}"); }
-                catch(Exception error) { Logger.LogError(error.Message); }
+                logger.LogInfo($"loading from filepath: {coords.JsonFilePath}");
+
+                if(coords.ReaperCoords is null)
+                {
+                    logger.LogInfo("Coord File is null! Preparing to populate Coord File...");
+                    PopulateCoordArray();
+                }
+                else
+                {
+                    logger.LogInfo("Coord File is already populated!");
+                }
 
                 //NOTE!! [0] works to display each slot! use for loop to display them all!!!
                 logger.LogInfo($"loading reaper coords from save slot: {coords.ReaperCoords[0]}");
@@ -94,6 +105,67 @@ namespace MoreLeviathanSpawns
                 ErrorMessage.AddMessage($"saved reaper coords from save slot: {coords.ReaperCoords}");
                 //ErrorMessage.AddMessage($"saved ghost coords from save slot: {coords.GhostCoords}");
             };
+        }
+
+        static void PopulateCoordArray()
+        {
+            SpawnData spawnData = new SpawnData
+            {
+                //AlwaysRandomized = config.AlwaysRandomized;
+                ReaperSpawnIntensity = config.ReaperSpawnIntensity,
+                GhostSpawnIntensity = config.GhostSpawnIntensity
+            };
+
+            logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {spawnData.ReaperSpawnIntensity}");
+            logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
+
+            //this will set a general amount of spawns based on the spawn intensity the player set, defaulting to '3'
+            int reaperSpawnTotal = (int)(spawnData.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
+            int ghostSpawnTotal = (int)(spawnData.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
+
+            logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Count} total reaper spawns");
+            logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoords.Count} total ghost spawns");
+
+            //Create a list for both sets of coords; we will be adding selected spawns to these lists, for the new save file
+            saveCoords.ReaperCoords = new List<Vector3>();
+            saveCoords.GhostCoords = new List<GhostCoordsAndType>();
+
+            //Reseed; used to generate random selection of spawns to add to the new save file
+            System.Random rnd = new System.Random();
+
+            //Randomly select reaper spawns to add to new save file, amount equal to reaperSpawnTotal
+            for (int i = 0; i < reaperSpawnTotal; i++)
+            {
+                //Select an index of the ReaperCoords list randomly, and add that reaper coord to the new save file
+                int j = rnd.Next(0, spawnData.ReaperCoords.Count - 1);
+                logger.Log(LogLevel.Info, $"Random selection of Reaper Coord #{j + 1}");
+                logger.Log(LogLevel.Info, $"Reaper spawn #{i + 1} - Coords: {spawnData.ReaperCoords[j]}");
+
+                //Add the selected coordinates to the list of coordinates for the new save file
+                saveCoords.ReaperCoords.Add(spawnData.ReaperCoords[j]);
+
+                //Remove the added reaper coord afterwards, to ensure it's not accidentally selected twice
+                spawnData.ReaperCoords.RemoveAt(j);
+            }
+
+            //Randomly select ghost spawns to add to new save file, amount equal to ghostSpawnTotal
+            for (int i = 0; i < ghostSpawnTotal; i++)
+            {
+                //DEBUG!! Log whether the ghost leviathan added is an adult or a juvenile
+                string ghostType = "Adult";
+                if (spawnData.GhostCoords[i].GhostType == 2) { ghostType = "Juvenile"; }
+
+                //Select an index of the GhostCoords list randomly, and add that ghost coord to the new save file
+                int j = rnd.Next(0, spawnData.GhostCoords.Count - 1);
+                logger.Log(LogLevel.Info, $"Random selection of Ghost {ghostType} Coord #{j + 1}");
+                logger.Log(LogLevel.Info, $"Ghost ({ghostType}) spawn #{i + 1} - Coords: {spawnData.GhostCoords[j].Coords}");
+
+                //Add the selected coordinates to the list of coordinates for the new save file
+                saveCoords.GhostCoords.Add(spawnData.GhostCoords[j]);
+
+                //Remove the added ghost coord afterwards, to ensure it's not accidentally selected twice
+                spawnData.GhostCoords.RemoveAt(j);
+            }
         }
     }
 
