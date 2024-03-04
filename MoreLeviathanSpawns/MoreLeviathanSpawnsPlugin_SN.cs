@@ -6,6 +6,8 @@ using Nautilus.Handlers;
 using Nautilus.Json;
 using Nautilus.Json.Attributes;
 using Nautilus.Options.Attributes;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 #pragma warning disable IDE1006 // Suppress warnings related to "Naming Styles"
@@ -34,8 +36,8 @@ namespace MoreLeviathanSpawns
             public int ReaperSpawnIntensity { get; set; }
             public int GhostSpawnIntensity { get; set; }
 
-            public UnityEngine.Vector3[] ReaperCoords { get; set; }
-            public UnityEngine.Vector3[] GhostCoords { get; set; }
+            public List<UnityEngine.Vector3> ReaperCoords { get; set; }
+            public List<GhostCoordsAndType> GhostCoords { get; set; }
         }
 
         public void Awake()
@@ -51,7 +53,8 @@ namespace MoreLeviathanSpawns
             {
                 SaveCoords coords = e.Instance as SaveCoords;
 
-                logger.LogInfo($"loading from filepath: {coords.JsonFilePath}");
+                try { logger.LogInfo($"loading from filepath: {coords.JsonFilePath}"); }
+                catch(Exception error) { Logger.LogError(error.Message); }
 
                 //NOTE!! [0] works to display each slot! use for loop to display them all!!!
                 logger.LogInfo($"loading reaper coords from save slot: {coords.ReaperCoords[0]}");
@@ -62,7 +65,7 @@ namespace MoreLeviathanSpawns
 
                 if (coords.ReaperSpawnIntensity != 0)
                 {
-                    for (int i = 0; i < coords.ReaperCoords.Length; i++)
+                    for (int i = 0; i < coords.ReaperCoords.Count; i++)
                     {
                         logger.Log(LogLevel.Info, $"Reaper spawn #{i + 1} - Coords: {coords.ReaperCoords[i]}");
                         CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, coords.ReaperCoords[i]));

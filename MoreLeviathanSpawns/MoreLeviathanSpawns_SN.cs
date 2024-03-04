@@ -73,11 +73,11 @@ namespace MoreLeviathanSpawns
             logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Count} total reaper spawns");
             logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoords.Count} total ghost spawns");
 
-            //Create an array as long as the total amount of spawns that will registered
-            saveCoords.ReaperCoords = new UnityEngine.Vector3[reaperSpawnTotal];
-            saveCoords.GhostCoords = new UnityEngine.Vector3[ghostSpawnTotal];
+            //Create a list for both sets of coords; we will be adding selected spawns to these lists, for the new save file
+            saveCoords.ReaperCoords = new List<UnityEngine.Vector3>();
+            saveCoords.GhostCoords = new List<GhostCoordsAndType>();
 
-            //Used to generate random selection of spawns to add to the new save file
+            //Reseed; used to generate random selection of spawns to add to the new save file
             System.Random rnd = new System.Random();
 
             //Randomly select reaper spawns to add to new save file, amount equal to reaperSpawnTotal
@@ -87,7 +87,9 @@ namespace MoreLeviathanSpawns
                 int j = rnd.Next(0, spawnData.ReaperCoords.Count - 1);
                 logger.Log(LogLevel.Info, $"Random selection of Reaper Coord #{j + 1}");
                 logger.Log(LogLevel.Info, $"Reaper spawn #{i + 1} - Coords: {spawnData.ReaperCoords[j]}");
-                saveCoords.ReaperCoords[i] = spawnData.ReaperCoords[j];
+
+                //Add the selected coordinates to the list of coordinates for the new save file
+                saveCoords.ReaperCoords.Add(spawnData.ReaperCoords[j]);
 
                 //Remove the added reaper coord afterwards, to ensure it's not accidentally selected twice
                 spawnData.ReaperCoords.RemoveAt(j);
@@ -104,6 +106,9 @@ namespace MoreLeviathanSpawns
                 int j = rnd.Next(0, spawnData.GhostCoords.Count - 1);
                 logger.Log(LogLevel.Info, $"Random selection of Ghost {ghostType} Coord #{j + 1}");
                 logger.Log(LogLevel.Info, $"Ghost ({ghostType}) spawn #{i + 1} - Coords: {spawnData.GhostCoords[j].Coords}");
+
+                //Add the selected coordinates to the list of coordinates for the new save file
+                saveCoords.GhostCoords.Add(spawnData.GhostCoords[j]);
 
                 //Remove the added ghost coord afterwards, to ensure it's not accidentally selected twice
                 spawnData.GhostCoords.RemoveAt(j);
