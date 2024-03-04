@@ -78,9 +78,6 @@ namespace MoreLeviathanSpawns
 
     public class SpawnData
     {
-        public bool AlwaysRandomized = false;
-        public float ReaperSpawnIntensity = 3;
-        public float GhostSpawnIntensity = 3;
         //23 Reaper Coordinates
         public List<Vector3> ReaperCoords = new List<Vector3>
         {

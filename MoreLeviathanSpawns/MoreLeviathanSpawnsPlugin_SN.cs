@@ -96,20 +96,17 @@ namespace MoreLeviathanSpawns
 
         static void PopulateCoordArray()
         {
+            logger.LogInfo($"ReaperSpawnIntensity: {config.ReaperSpawnIntensity}");
+
             //Get a new set of possible coordinates, listed in the SpawnData class, as well as the SpawnIntensity of each leviathan
-            SpawnData spawnData = new SpawnData
-            {
-                //AlwaysRandomized = config.AlwaysRandomized;
-                ReaperSpawnIntensity = config.ReaperSpawnIntensity,
-                GhostSpawnIntensity = config.GhostSpawnIntensity
-            };
-            logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {spawnData.ReaperSpawnIntensity}");
-            logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {spawnData.GhostSpawnIntensity}");
+            SpawnData spawnData = new SpawnData();
+            logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {config.ReaperSpawnIntensity}");
+            logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {config.GhostSpawnIntensity}");
 
             //Determine the amount of coordinates to save, and amount of leviathans to spawn, using the SpawnIntensity of each leviathan
-            int reaperSpawnTotal = (int)(spawnData.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
+            int reaperSpawnTotal = (int)(config.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
             logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Count} total Reaper spawns");
-            int ghostSpawnTotal = (int)(spawnData.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
+            int ghostSpawnTotal = (int)(config.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
             logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoords.Count} total Ghost spawns");
 
             //Create a list for both sets of coords; we will be adding selected coordinates to these lists, for the new coord file
