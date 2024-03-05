@@ -96,7 +96,8 @@ namespace MoreLeviathanSpawns
 
         static void PopulateCoordArray()
         {
-            logger.LogInfo($"ReaperSpawnIntensity: {config.ReaperSpawnIntensity}");
+            logger.LogInfo($"ReaperSpawnIntensity (from save): {saveCoords.ReaperSpawnIntensity}");
+            logger.LogInfo($"ReaperSpawnIntensity (from config): {config.ReaperSpawnIntensity}");
 
             //Get a new set of possible coordinates, listed in the SpawnData class, as well as the SpawnIntensity of each leviathan
             SpawnData spawnData = new SpawnData();
@@ -121,7 +122,8 @@ namespace MoreLeviathanSpawns
             {
                 //Select an index of the ReaperCoords list randomly, and add that reaper coordinate to the new coord file
                 int j = rnd.Next(0, spawnData.ReaperCoords.Count - 1);
-                logger.Log(LogLevel.Debug, $"Random selection of Reaper Coord #{j + 1}");
+
+                logger.Log(LogLevel.Info, $"Random selection of Reaper Coord #{j + 1}");
                 logger.Log(LogLevel.Info, $"Adding Reaper spawn #{i + 1} - Coords: {spawnData.ReaperCoords[j]}");
 
                 //Add the selected reaper coordinate to the new coord file
@@ -134,13 +136,13 @@ namespace MoreLeviathanSpawns
             //Randomly select ghost spawns to add to new save file, amount equal to ghostSpawnTotal
             for (int i = 0; i < ghostSpawnTotal; i++)
             {
-                //DEBUG!! Log whether the ghost leviathan added is an adult or a juvenile
-                string ghostType = "Adult";
-                if (spawnData.GhostCoords[i].GhostType == 2) { ghostType = "Juvenile"; }
-
                 //Select an index of the GhostCoords list randomly, and add that ghost coordinate to the new coord file, alongside its maturity
                 int j = rnd.Next(0, spawnData.GhostCoords.Count - 1);
-                logger.Log(LogLevel.Debug, $"Random selection of Ghost {ghostType} Coord #{j + 1}");
+
+                //Log whether the ghost leviathan added is an adult or a juvenile
+                string ghostType = "Adult";
+                if (spawnData.GhostCoords[j].GhostType == 2) { ghostType = "Juvenile"; }
+                logger.Log(LogLevel.Info, $"Random selection of Ghost {ghostType} Coord #{j + 1}");
                 logger.Log(LogLevel.Info, $"Adding Ghost ({ghostType}) spawn #{i + 1} - Coords: {spawnData.GhostCoords[j].Coord}");
 
                 //Add the selected ghost coordinate to the new coord file
@@ -155,9 +157,9 @@ namespace MoreLeviathanSpawns
     [Menu("More Leviathan Spawns")]
     public class Config : Nautilus.Json.ConfigFile
     {
-        [Slider("Reaper Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "reaperSpawnIntensity", Tooltip = "Defines general intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add roughly 2 - 4 spawns. A value of 6 will add roughly 20 - 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
+        [Slider("Reaper Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "ReaperSpawnIntensity", Tooltip = "Defines general intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add roughly 2 - 4 spawns. A value of 6 will add roughly 20 - 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
         public float ReaperSpawnIntensity = 3F;
-        [Slider("Ghost Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "ghostSpawnIntensity", Tooltip = "Defines general intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
+        [Slider("Ghost Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "GhostSpawnIntensity", Tooltip = "Defines general intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
         public float GhostSpawnIntensity = 3F;
         //NOTE!! How could this have possible worked, if you can't unspawn leviathans? All this would have done would randomise until all unique spawns were registered
         //In essence, this just eventually hit the max, always.
