@@ -96,18 +96,19 @@ namespace MoreLeviathanSpawns
 
         static void PopulateCoordArray()
         {
-            logger.LogInfo($"ReaperSpawnIntensity (from save): {saveCoords.ReaperSpawnIntensity}");
-            logger.LogInfo($"ReaperSpawnIntensity (from config): {config.ReaperSpawnIntensity}");
-
             //Get a new set of possible coordinates, listed in the SpawnData class, as well as the SpawnIntensity of each leviathan
             SpawnData spawnData = new SpawnData();
-            logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {config.ReaperSpawnIntensity}");
-            logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {config.GhostSpawnIntensity}");
+
+            //Set new coord file's spawn intensity to that selected in the config/menu
+            saveCoords.ReaperSpawnIntensity = config.ReaperSpawnIntensity;
+            saveCoords.GhostSpawnIntensity = config.GhostSpawnIntensity;
+            logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {saveCoords.ReaperSpawnIntensity}");
+            logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {saveCoords.GhostSpawnIntensity}");
 
             //Determine the amount of coordinates to save, and amount of leviathans to spawn, using the SpawnIntensity of each leviathan
-            int reaperSpawnTotal = (int)(config.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
+            int reaperSpawnTotal = (int)(saveCoords.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
             logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Count} total Reaper spawns");
-            int ghostSpawnTotal = (int)(config.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
+            int ghostSpawnTotal = (int)(saveCoords.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
             logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoords.Count} total Ghost spawns");
 
             //Create a list for both sets of coords; we will be adding selected coordinates to these lists, for the new coord file
@@ -157,10 +158,10 @@ namespace MoreLeviathanSpawns
     [Menu("More Leviathan Spawns")]
     public class Config : Nautilus.Json.ConfigFile
     {
-        [Slider("Reaper Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "ReaperSpawnIntensity", Tooltip = "Defines general intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add roughly 2 - 4 spawns. A value of 6 will add roughly 20 - 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
-        public float ReaperSpawnIntensity = 3F;
-        [Slider("Ghost Spawn Intensity", Min = 0F, Max = 6F, DefaultValue = 3F, Step = 1F, Id = "GhostSpawnIntensity", Tooltip = "Defines general intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
-        public float GhostSpawnIntensity = 3F;
+        [Slider("Reaper Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "ReaperSpawnIntensity", Tooltip = "Defines general intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add roughly 2 - 4 spawns. A value of 6 will add roughly 20 - 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
+        public int ReaperSpawnIntensity = 3;
+        [Slider("Ghost Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "GhostSpawnIntensity", Tooltip = "Defines general intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
+        public int GhostSpawnIntensity = 3;
         //NOTE!! How could this have possible worked, if you can't unspawn leviathans? All this would have done would randomise until all unique spawns were registered
         //In essence, this just eventually hit the max, always.
         //Need to either figure out if leviathans can be unregistered from the world spawn thing, or need to remove this option entirely.
