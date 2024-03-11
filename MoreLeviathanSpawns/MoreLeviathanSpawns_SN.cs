@@ -63,7 +63,7 @@ namespace MoreLeviathanSpawns
                         __ghostTechType = TechType.GhostLeviathanJuvenile;
                     }
 
-                    logger.Log(LogLevel.Info, $"Spawning Ghost {__ghostType} spawn #{i + 1} - Coords: {__ghostCoord}");
+                    logger.Log(LogLevel.Info, $"Spawning Ghost {__ghostType} spawn #{i + 1} - Coords: {__ghostCoord.Coord}");
                     CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(__ghostTechType, __ghostCoord.Coord));
                 }
             }

@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using Nautilus.Commands;
 using Nautilus.Handlers;
 using Nautilus.Json;
 using Nautilus.Json.Attributes;
@@ -32,8 +33,8 @@ namespace MoreLeviathanSpawns
         [FileName("leviathans_coords")]
         internal class SaveCoords : SaveDataCache
         {
-            public int ReaperSpawnIntensity { get; set; }
-            public int GhostSpawnIntensity { get; set; }
+            public float ReaperSpawnIntensity { get; set; }
+            public float GhostSpawnIntensity { get; set; }
 
             public List<Vector3> ReaperCoords { get; set; }
             public List<GhostCoordsAndType> GhostCoords { get; set; }
@@ -76,22 +77,48 @@ namespace MoreLeviathanSpawns
             {
                 SaveCoords coords = e.Instance as SaveCoords;
 
-                logger.LogInfo($"loaded from filepath: {coords.JsonFilePath}");
-
-                logger.LogInfo($"loaded reaper coords from save slot: {coords.ReaperCoords}");
-                //logger.LogInfo($"loaded ghost coords from save slot: {coords.GhostCoords}");
-                ErrorMessage.AddMessage($"loaded reaper coords from save slot: {coords.ReaperCoords}");
-                //ErrorMessage.AddMessage($"loaded ghost coords from save slot: {coords.GhostCoords}");
+                ErrorMessage.AddMessage($"Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
+                ErrorMessage.AddMessage($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
             };
 
             saveCoords.OnFinishedSaving += (object sender, JsonFileEventArgs e) =>
             {
                 SaveCoords coords = e.Instance as SaveCoords;
-                logger.LogInfo($"saved reaper coords from save slot: {coords.ReaperCoords}");
-                //logger.LogInfo($"saved ghost coords from save slot: {coords.GhostCoords}");
-                ErrorMessage.AddMessage($"saved reaper coords from save slot: {coords.ReaperCoords}");
-                //ErrorMessage.AddMessage($"saved ghost coords from save slot: {coords.GhostCoords}");
+
+
+                ErrorMessage.AddMessage($"Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
+                ErrorMessage.AddMessage($"Saved {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
             };
+
+            ConsoleCommandsHandler.RegisterConsoleCommands(typeof(LeviathanCommands));
+        }
+
+        public static class LeviathanCommands
+        {
+            [ConsoleCommand("coordwarp")]
+            public static void CoordWarp(int index)
+            {
+                int reaper_count = saveCoords.ReaperCoords.Count;
+                int ghost_count = saveCoords.GhostCoords.Count;
+
+                if (index >= 1 || index <= (reaper_count + ghost_count))
+                {
+                    if (index <= reaper_count)
+                    {
+                        ErrorMessage.AddMessage($"Teleporting to Reaper coord #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
+                        Player.main.SetPosition(saveCoords.ReaperCoords[index - 1]);
+                    }
+                    else
+                    {
+                        ErrorMessage.AddMessage($"Teleporting to Ghost coord #{index - reaper_count} - Coords: {saveCoords.GhostCoords[index - reaper_count - 1].Coord}");
+                        Player.main.SetPosition(saveCoords.GhostCoords[index - reaper_count - 1].Coord);
+                    }
+                }
+                else
+                {
+                    ErrorMessage.AddMessage($"Index {index-1} out of bounds!");
+                }
+            }
         }
 
         static void PopulateCoordArray()
@@ -104,6 +131,15 @@ namespace MoreLeviathanSpawns
             saveCoords.GhostSpawnIntensity = config.GhostSpawnIntensity;
             logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {saveCoords.ReaperSpawnIntensity}");
             logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {saveCoords.GhostSpawnIntensity}");
+
+            logger.Log(LogLevel.Info, $"0/6*count = {(int)(0F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"1/6*count = {(int)(1F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"2/6*count = {(int)(2F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"3/6*count = {(int)(3F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"4/6*count = {(int)(4F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"5/6*count = {(int)(5F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"6/6*count = {(int)(6F / 6 * spawnData.ReaperCoords.Count)}");
+
 
             //Determine the amount of coordinates to save, and amount of leviathans to spawn, using the SpawnIntensity of each leviathan
             int reaperSpawnTotal = (int)(saveCoords.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
@@ -167,35 +203,5 @@ namespace MoreLeviathanSpawns
         //Need to either figure out if leviathans can be unregistered from the world spawn thing, or need to remove this option entirely.
         [Toggle("Always randomize spawns?", Id = "alwaysRandomize", Tooltip = "By default, spawn locations are chosen randomly then saved and remain static for rest of playthrough. If this option is checked, spawns will always randomize when opening that save file.")]
         public bool AlwaysRandomized = false;
-
-        /*OKAY!! So, the plan is (best case; can work down from here);
-         * - Create a new json file per save, recognising the identifier for each new save, that includes the randomly generated list of coordinates of leviathans for that world
-         * - json file is split between the name of the save, to identify it, and the coordinates used, which are run through the registering code, in case any are missed
-         * - Creates if it can find no file with the appropirate naming convention (being the name of the save plus something like "leviathancoords"
-         * - Loads from file if it does find it
-        */
-
-        /*private void SpawnIntensityChanged(SliderChangedEventArgs e)
-        {
-            switch (e.Id)
-            {
-                case "reaperSpawnIntensity":
-                    ReaperSpawnIntensity = e.Value;
-                    break;
-                case "ghostSpawnIntensity":
-                    GhostSpawnIntensity = e.Value;
-                    break;
-            }
-        }
-
-        private void ToggleChanged(ToggleChangedEventArgs e)
-        {
-            switch (e.Id)
-            {
-                case "alwaysRandomized":
-                    AlwaysRandomized = e.Value;
-                    break;
-            }
-        }*/
     }
 }
