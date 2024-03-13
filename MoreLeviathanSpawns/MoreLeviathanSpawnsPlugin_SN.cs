@@ -46,12 +46,29 @@ namespace MoreLeviathanSpawns
             Logger.LogInfo(pluginName + " " + versionString + " " + "loaded.");
             logger = Logger;
 
-            /*OnStartLoading, check whether the coord file has null values;
+            /* --- NOTES REGARDING SAVING, LOADING, & CREATING AND CHANGING SAVE FILES ---
+             - When creating a save, using OnFinishedLoading, it works perfectly fine, and restarting the game and then
+               loading this same save, even with different intensity settings, works perfectly fine too
+             
+             - Creating/Loading a save, then creating/loading another one, will *say* it's loaded the correct intensity settings;
+               whilst it technically has, because of CoordinatesSpawns spillover, registering spawns in one session will register 
+               them in any save loaded. Quitting first before loading the save will probably work.
+             - The spillover might be fixed by not re-registering the saves each time, but that's also liable to cause the mod
+               to fail, so best-case I'll likely just have to include a warning with the mod until Nautilus fixes this.
+            
+             - Quitting the game, then loading an already created save, loads the correct settings and spawns. Quitting and then
+               loading a different save also works, so this solution is repeatable for different saves with different settings.
+
+             - Loading a save, then saving with different settings to the one the save files has, then reloading the save, does
+               *not* cause any more leviathans to spawn. Quitting after saving, then loading has no effect either. Still the only
+               issue is spillover.*/
+
+            /*OnFinishedLoading, check whether the coord file has null values;
              - if it does, it means the save and coord files are being created for the first time and that we need
                to populate the coord file with a random selection of leviathan coordinates, based on the intensity selected
              - if it doesn't have null values, it means this is not the first time the save has been loaded and we can skip
                the process of populating the coord file with levaithan coordinates*/
-            saveCoords.OnStartedLoading += (object sender, JsonFileEventArgs e) =>
+            saveCoords.OnFinishedLoading += (object sender, JsonFileEventArgs e) =>
             {
                 SaveCoords coords = e.Instance as SaveCoords;
 
@@ -70,12 +87,6 @@ namespace MoreLeviathanSpawns
                 {
                     logger.LogInfo("Coord File is already populated!");
                 }
-            };
-
-            //Display coords upon loading a save
-            saveCoords.OnFinishedLoading += (object sender, JsonFileEventArgs e) =>
-            {
-                SaveCoords coords = e.Instance as SaveCoords;
 
                 ErrorMessage.AddMessage($"Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
                 ErrorMessage.AddMessage($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
