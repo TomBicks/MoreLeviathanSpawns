@@ -21,8 +21,12 @@ namespace MoreLeviathanSpawns
             // Check to see if this is the player
             if (__instance.GetType() == typeof(Player))
             {
-                //Spawn in all leviathans from the Coord File
-                SpawnLeviathans();
+                //If mod is enabled
+                if(!(saveCoords.ReaperCoords is null))
+                {
+                    //Spawn in all leviathans from the Coord File
+                    SpawnLeviathans();
+                }
             }
         }
 

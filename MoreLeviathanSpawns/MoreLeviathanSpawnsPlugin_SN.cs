@@ -46,6 +46,7 @@ namespace MoreLeviathanSpawns
             Logger.LogInfo(pluginName + " " + versionString + " " + "loaded.");
             logger = Logger;
 
+
             /* --- NOTES REGARDING SAVING, LOADING, & CREATING AND CHANGING SAVE FILES ---
              - When creating a save, using OnFinishedLoading, it works perfectly fine, and restarting the game and then
                loading this same save, even with different intensity settings, works perfectly fine too
@@ -61,7 +62,11 @@ namespace MoreLeviathanSpawns
 
              - Loading a save, then saving with different settings to the one the save files has, then reloading the save, does
                *not* cause any more leviathans to spawn. Quitting after saving, then loading has no effect either. Still the only
-               issue is spillover.*/
+               issue is spillover.
+            
+             - Once a leviathan has been spawned in (so possibly if it hasn't been loaded its fine), and the game has been saved,
+               that spawn will likely be permanent, regardless if the user wants it to be or not. So removing the mod will not fix.*/
+
 
             /*OnFinishedLoading, check whether the coord file has null values;
              - if it does, it means the save and coord files are being created for the first time and that we need
@@ -76,29 +81,45 @@ namespace MoreLeviathanSpawns
 
                 if(coords.ReaperCoords is null)
                 {
-                    //Loading the save for the first time and creating the coord file for the first time
-                    logger.LogInfo("Coord File is null! Preparing to populate Leviathan Coords file...");
-                    PopulateCoordArray();
+                    //If both spawn intensities are set to 0, user doesn't want leviathans spawned on this new save file
+                    if(config.ReaperSpawnIntensity == 0 && config.GhostSpawnIntensity == 0)
+                    {
+                        logger.LogInfo("Coord File is null, but Spawn Intensity is 0. Ignoring adding leviathan spawns.");
+                    }
+                    else
+                    {
+                        //Loading the save for the first time and creating the coord file for the first time
+                        logger.LogInfo("Coord File is null! Preparing to populate Leviathan Coords file...");
+                        PopulateCoordArray();
 
-                    //Now that the SaveDataCache has all the proper values assigned for this save, properly save the new coord file and its values
-                    saveCoords.Save();
+                        //Now that the SaveDataCache has all the proper values assigned for this save, properly save the new coord file and its values
+                        saveCoords.Save();
+                    }
                 }
                 else
                 {
                     logger.LogInfo("Coord File is already populated!");
                 }
 
-                ErrorMessage.AddMessage($"Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
-                ErrorMessage.AddMessage($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
+                //DEBUG!! Display values being loaded; check again if coords file is null, due to spawn intensity 0 otherwise causing issues
+                if (!(coords.ReaperCoords is null))
+                {
+                    logger.LogInfo("test");
+                    ErrorMessage.AddMessage($"Loading Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
+                    ErrorMessage.AddMessage($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
+                }
             };
 
             saveCoords.OnFinishedSaving += (object sender, JsonFileEventArgs e) =>
             {
                 SaveCoords coords = e.Instance as SaveCoords;
 
-
-                ErrorMessage.AddMessage($"Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
-                ErrorMessage.AddMessage($"Saved {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
+                //DEBUG!! Display values being saved; check again if coords file is null, due to spawn intensity 0 otherwise causing issues
+                if (!(coords.ReaperCoords is null))
+                {
+                    ErrorMessage.AddMessage($"Saving Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
+                    ErrorMessage.AddMessage($"Saved {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
+                }
             };
 
             ConsoleCommandsHandler.RegisterConsoleCommands(typeof(LeviathanCommands));
@@ -109,25 +130,33 @@ namespace MoreLeviathanSpawns
             [ConsoleCommand("coordwarp")]
             public static void CoordWarp(int index)
             {
-                int reaper_count = saveCoords.ReaperCoords.Count;
-                int ghost_count = saveCoords.GhostCoords.Count;
-
-                if (index >= 1 || index <= (reaper_count + ghost_count))
+                //Check first if the mod is enabled (spawn intensity > 0 and coord file populated) before running the command
+                if (!(saveCoords.ReaperCoords is null))
                 {
-                    if (index <= reaper_count)
+                    int reaper_count = saveCoords.ReaperCoords.Count;
+                    int ghost_count = saveCoords.GhostCoords.Count;
+
+                    if (index >= 1 || index <= (reaper_count + ghost_count))
                     {
-                        ErrorMessage.AddMessage($"Teleporting to Reaper coord #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
-                        Player.main.SetPosition(saveCoords.ReaperCoords[index - 1]);
+                        if (index <= reaper_count)
+                        {
+                            ErrorMessage.AddMessage($"Teleporting to Reaper coord #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
+                            Player.main.SetPosition(saveCoords.ReaperCoords[index - 1]);
+                        }
+                        else
+                        {
+                            ErrorMessage.AddMessage($"Teleporting to Ghost coord #{index - reaper_count} - Coords: {saveCoords.GhostCoords[index - reaper_count - 1].Coord}");
+                            Player.main.SetPosition(saveCoords.GhostCoords[index - reaper_count - 1].Coord);
+                        }
                     }
                     else
                     {
-                        ErrorMessage.AddMessage($"Teleporting to Ghost coord #{index - reaper_count} - Coords: {saveCoords.GhostCoords[index - reaper_count - 1].Coord}");
-                        Player.main.SetPosition(saveCoords.GhostCoords[index - reaper_count - 1].Coord);
+                        ErrorMessage.AddMessage($"Index {index} out of bounds!");
                     }
                 }
                 else
                 {
-                    ErrorMessage.AddMessage($"Index {index-1} out of bounds!");
+                    ErrorMessage.AddMessage($"Mod is not enabled! Please set Spawn Intensity to above 0 and restart to enable.");
                 }
             }
         }
