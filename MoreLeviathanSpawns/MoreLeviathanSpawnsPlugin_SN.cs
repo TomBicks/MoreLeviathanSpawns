@@ -72,7 +72,7 @@ namespace MoreLeviathanSpawns
              - if it does, it means the save and coord files are being created for the first time and that we need
                to populate the coord file with a random selection of leviathan coordinates, based on the intensity selected
              - if it doesn't have null values, it means this is not the first time the save has been loaded and we can skip
-               the process of populating the coord file with levaithan coordinates*/
+               the process of populating the coord file with leviathan coordinates*/
             saveCoords.OnFinishedLoading += (object sender, JsonFileEventArgs e) =>
             {
                 SaveCoords coords = e.Instance as SaveCoords;
@@ -172,13 +172,21 @@ namespace MoreLeviathanSpawns
             logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {saveCoords.ReaperSpawnIntensity}");
             logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {saveCoords.GhostSpawnIntensity}");
 
-            logger.Log(LogLevel.Info, $"0/6*count = {(int)(0F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"1/6*count = {(int)(1F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"2/6*count = {(int)(2F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"3/6*count = {(int)(3F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"4/6*count = {(int)(4F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"5/6*count = {(int)(5F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"6/6*count = {(int)(6F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Reaper 0/6*count = {(int)(0F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Reaper 1/6*count = {(int)(1F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Reaper 2/6*count = {(int)(2F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Reaper 3/6*count = {(int)(3F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Reaper 4/6*count = {(int)(4F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Reaper 5/6*count = {(int)(5F / 6 * spawnData.ReaperCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Reaper 6/6*count = {(int)(6F / 6 * spawnData.ReaperCoords.Count)}");
+
+            logger.Log(LogLevel.Info, $"Ghost 0/6*count = {(int)(0F / 6 * spawnData.GhostCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Ghost 1/6*count = {(int)(1F / 6 * spawnData.GhostCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Ghost 2/6*count = {(int)(2F / 6 * spawnData.GhostCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Ghost 3/6*count = {(int)(3F / 6 * spawnData.GhostCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Ghost 4/6*count = {(int)(4F / 6 * spawnData.GhostCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Ghost 5/6*count = {(int)(5F / 6 * spawnData.GhostCoords.Count)}");
+            logger.Log(LogLevel.Info, $"Ghost 6/6*count = {(int)(6F / 6 * spawnData.GhostCoords.Count)}");
 
 
             //Determine the amount of coordinates to save, and amount of leviathans to spawn, using the SpawnIntensity of each leviathan
@@ -191,8 +199,31 @@ namespace MoreLeviathanSpawns
             saveCoords.ReaperCoords = new List<Vector3>();
             saveCoords.GhostCoords = new List<GhostCoordsAndType>();
 
-            //Reseed random number generator; used to generate random selection of coordinates to add to the new coord file
+            /*Reseed random number generator; used to add or subtract from the amount of spawns if variable spawns is enabled 
+             and generate random selection of coordinates to add to the new coord file*/
             System.Random rnd = new System.Random();
+
+            //If variable spawns have been selected determine random amount to add or subtract from the amount (could still be 0 difference)
+            if (config.AddVariableSpawns)
+            {
+                var _reaper_intensity = saveCoords.ReaperSpawnIntensity;
+                var _ghost_intensity = saveCoords.GhostSpawnIntensity;
+                //Only do this if the spawns are neither 0 nor set to max
+                int _var_reaper_spawns = rnd.Next(2,-2);
+                int _var_ghost_spawns = rnd.Next(-2,-2);
+
+                if(_reaper_intensity != 0 || _reaper_intensity !=6)
+                {
+                    logger.Log(LogLevel.Info, $"Reaper Spawn Total varied by {_var_reaper_spawns}");
+                    reaperSpawnTotal += _var_reaper_spawns;
+                }
+
+                if (_var_ghost_spawns != 0 || _var_ghost_spawns != 6)
+                {
+                    logger.Log(LogLevel.Info, $"Ghost Spawn Total varied by {_var_ghost_spawns}");
+                    ghostSpawnTotal += _var_ghost_spawns;
+                }
+            }
 
             //Randomly select reaper coordinates to add to new coord file, amount equal to reaperSpawnTotal
             for (int i = 0; i < reaperSpawnTotal; i++)
@@ -234,14 +265,30 @@ namespace MoreLeviathanSpawns
     [Menu("More Leviathan Spawns")]
     public class Config : Nautilus.Json.ConfigFile
     {
-        [Slider("Reaper Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "ReaperSpawnIntensity", Tooltip = "Defines general intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add roughly 2 - 4 spawns. A value of 6 will add roughly 20 - 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
+        //DEBUG!! Numbers testing, showing how much each intensity rounds to when spawning leviathans
+        //Will use this to determine the randomness setting, likely +-2 spawns, excluding max intensity and 0 spawns
+        //Reaper Spawn Intensity - 1=3, 2=7, 3=11, 4=15, 5=19, 6=23
+        //Ghost Spawn Intensity - 1=2, 2=4, 3=7, 4=9, 5=11, 6=14
+        //Reaper 0/6*count = 0
+        //Reaper 1/6*count = 3
+        //Reaper 2/6*count = 7
+        //Reaper 3/6*count = 11
+        //Reaper 4/6*count = 15
+        //Reaper 5/6*count = 19
+        //Reaper 6/6*count = 23
+        //Ghost 0/6*count = 0
+        //Ghost 1/6*count = 2
+        //Ghost 2/6*count = 4
+        //Ghost 3/6*count = 7
+        //Ghost 4/6*count = 9
+        //Ghost 5/6*count = 11
+        //Ghost 6/6*count = 14
+
+        [Slider("Reaper Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "ReaperSpawnIntensity", Tooltip = "Defines intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add 3 spawns. A value of 6 will add 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
         public int ReaperSpawnIntensity = 3;
-        [Slider("Ghost Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "GhostSpawnIntensity", Tooltip = "Defines general intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
+        [Slider("Ghost Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "GhostSpawnIntensity", Tooltip = "Defines intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
         public int GhostSpawnIntensity = 3;
-        //NOTE!! How could this have possible worked, if you can't unspawn leviathans? All this would have done would randomise until all unique spawns were registered
-        //In essence, this just eventually hit the max, always.
-        //Need to either figure out if leviathans can be unregistered from the world spawn thing, or need to remove this option entirely.
-        [Toggle("Always randomize spawns?", Id = "alwaysRandomize", Tooltip = "By default, spawn locations are chosen randomly then saved and remain static for rest of playthrough. If this option is checked, spawns will always randomize when opening that save file.")]
-        public bool AlwaysRandomized = false;
+        [Toggle("Add variable spawns?", Id = "AddVariableSpawns", Tooltip = "By default, a static amount of spawns will be added. By selecting this, that amount could be anywhere from 2 more to 2 less than expected, adding some variability on creation.")]
+        public bool AddVariableSpawns = false;
     }
 }
