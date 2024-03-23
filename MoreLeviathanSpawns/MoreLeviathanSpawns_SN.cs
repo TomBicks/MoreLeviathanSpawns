@@ -43,7 +43,7 @@ namespace MoreLeviathanSpawns
                 {
                     Vector3 __reaperCoord = saveCoords.ReaperCoords[i];
 
-                    logger.Log(LogLevel.Info, $"Spawning Reaper spawn #{i + 1} - Coords: {__reaperCoord}");
+                    logger.LogInfo($"Spawning Reaper spawn #{i + 1} - Coords: {__reaperCoord}");
                     CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, __reaperCoord));
                 }
             }
@@ -64,7 +64,7 @@ namespace MoreLeviathanSpawns
                         __ghostTechType = TechType.GhostLeviathanJuvenile;
                     }
 
-                    logger.Log(LogLevel.Info, $"Spawning Ghost {__ghostType} spawn #{i + 1} - Coords: {__ghostCoord.Coord}");
+                    logger.LogInfo($"Spawning Ghost {__ghostType} spawn #{i + 1} - Coords: {__ghostCoord.Coord}");
                     CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(__ghostTechType, __ghostCoord.Coord));
                 }
             }
