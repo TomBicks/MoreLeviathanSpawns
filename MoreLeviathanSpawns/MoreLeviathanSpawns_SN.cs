@@ -36,9 +36,6 @@ namespace MoreLeviathanSpawns
             logger.LogInfo($"Loading {saveCoords.ReaperCoords.Count} Reaper spawns");
             logger.LogInfo($"Loading {saveCoords.GhostCoords.Count} Ghost spawns");
 
-            logger.LogInfo($"ReaperSpawnIntensity (from save): {saveCoords.ReaperSpawnIntensity}");
-            logger.LogInfo($"ReaperSpawnIntensity (from config): {config.ReaperSpawnIntensity}");
-
             //Register reaper spawns from selected list of coordinates with the CoordinatedSpawnsHandler
             if (saveCoords.ReaperSpawnIntensity != 0)
             {

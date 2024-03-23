@@ -104,7 +104,6 @@ namespace MoreLeviathanSpawns
                 //DEBUG!! Display values being loaded; check again if coords file is null, due to spawn intensity 0 otherwise causing issues
                 if (!(coords.ReaperCoords is null))
                 {
-                    logger.LogInfo("test");
                     ErrorMessage.AddMessage($"Loading Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
                     ErrorMessage.AddMessage($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
                 }
@@ -136,7 +135,7 @@ namespace MoreLeviathanSpawns
                     int reaper_count = saveCoords.ReaperCoords.Count;
                     int ghost_count = saveCoords.GhostCoords.Count;
 
-                    if (index >= 1 || index <= (reaper_count + ghost_count))
+                    if (index >= 1 && index <= (reaper_count + ghost_count))
                     {
                         if (index <= reaper_count)
                         {
@@ -172,28 +171,9 @@ namespace MoreLeviathanSpawns
             logger.Log(LogLevel.Info, $"Reaper spawn intensity is set to: {saveCoords.ReaperSpawnIntensity}");
             logger.Log(LogLevel.Info, $"Ghost spawn intensity is set to: {saveCoords.GhostSpawnIntensity}");
 
-            logger.Log(LogLevel.Info, $"Reaper 0/6*count = {(int)(0F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Reaper 1/6*count = {(int)(1F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Reaper 2/6*count = {(int)(2F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Reaper 3/6*count = {(int)(3F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Reaper 4/6*count = {(int)(4F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Reaper 5/6*count = {(int)(5F / 6 * spawnData.ReaperCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Reaper 6/6*count = {(int)(6F / 6 * spawnData.ReaperCoords.Count)}");
-
-            logger.Log(LogLevel.Info, $"Ghost 0/6*count = {(int)(0F / 6 * spawnData.GhostCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Ghost 1/6*count = {(int)(1F / 6 * spawnData.GhostCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Ghost 2/6*count = {(int)(2F / 6 * spawnData.GhostCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Ghost 3/6*count = {(int)(3F / 6 * spawnData.GhostCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Ghost 4/6*count = {(int)(4F / 6 * spawnData.GhostCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Ghost 5/6*count = {(int)(5F / 6 * spawnData.GhostCoords.Count)}");
-            logger.Log(LogLevel.Info, $"Ghost 6/6*count = {(int)(6F / 6 * spawnData.GhostCoords.Count)}");
-
-
             //Determine the amount of coordinates to save, and amount of leviathans to spawn, using the SpawnIntensity of each leviathan
             int reaperSpawnTotal = (int)(saveCoords.ReaperSpawnIntensity / 6 * spawnData.ReaperCoords.Count);
-            logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Count} total Reaper spawns");
             int ghostSpawnTotal = (int)(saveCoords.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
-            logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoords.Count} total Ghost spawns");
 
             //Create a list for both sets of coords; we will be adding selected coordinates to these lists, for the new coord file
             saveCoords.ReaperCoords = new List<Vector3>();
@@ -209,21 +189,25 @@ namespace MoreLeviathanSpawns
                 var _reaper_intensity = saveCoords.ReaperSpawnIntensity;
                 var _ghost_intensity = saveCoords.GhostSpawnIntensity;
                 //Only do this if the spawns are neither 0 nor set to max
-                int _var_reaper_spawns = rnd.Next(2,-2);
-                int _var_ghost_spawns = rnd.Next(-2,-2);
+                int _var_reaper_spawns = rnd.Next(-2, 2);
+                int _var_ghost_spawns = rnd.Next(-2, 2);
 
-                if(_reaper_intensity != 0 || _reaper_intensity !=6)
+                if (_reaper_intensity != 0 && _reaper_intensity != 6)
                 {
-                    logger.Log(LogLevel.Info, $"Reaper Spawn Total varied by {_var_reaper_spawns}");
+                    logger.Log(LogLevel.Info, $"Reaper Spawn Total of {reaperSpawnTotal} varied by {_var_reaper_spawns}");
                     reaperSpawnTotal += _var_reaper_spawns;
                 }
 
-                if (_var_ghost_spawns != 0 || _var_ghost_spawns != 6)
+                if (_ghost_intensity != 0 && _ghost_intensity != 6)
                 {
-                    logger.Log(LogLevel.Info, $"Ghost Spawn Total varied by {_var_ghost_spawns}");
+                    logger.Log(LogLevel.Info, $"Ghost Spawn Total of {ghostSpawnTotal} varied by {_var_ghost_spawns}");
                     ghostSpawnTotal += _var_ghost_spawns;
                 }
             }
+
+            //Display amount of coords to be loaded
+            logger.Log(LogLevel.Info, $"Loading {reaperSpawnTotal} of {spawnData.ReaperCoords.Count} total Reaper spawns");
+            logger.Log(LogLevel.Info, $"Loading {ghostSpawnTotal} of {spawnData.GhostCoords.Count} total Ghost spawns");
 
             //Randomly select reaper coordinates to add to new coord file, amount equal to reaperSpawnTotal
             for (int i = 0; i < reaperSpawnTotal; i++)
