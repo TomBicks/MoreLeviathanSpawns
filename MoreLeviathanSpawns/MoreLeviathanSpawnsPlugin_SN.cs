@@ -194,22 +194,22 @@ namespace MoreLeviathanSpawns
             //If variable spawns have been selected determine random amount to add or subtract from the amount (could still be 0 difference)
             if (config.AddVariableSpawns)
             {
-                var _reaper_intensity = saveCoords.ReaperSpawnIntensity;
-                var _ghost_intensity = saveCoords.GhostSpawnIntensity;
+                var reaper_intensity = saveCoords.ReaperSpawnIntensity;
+                var ghost_intensity = saveCoords.GhostSpawnIntensity;
                 //Only do this if the spawns are neither 0 nor set to max
-                int _var_reaper_spawns = rnd.Next(-2, 2);
-                int _var_ghost_spawns = rnd.Next(-2, 2);
+                int var_reaper_spawns = rnd.Next(-2, 2);
+                int var_ghost_spawns = rnd.Next(-2, 2);
 
-                if (_reaper_intensity != 0 && _reaper_intensity != 6)
+                if (reaper_intensity != 0 && reaper_intensity != 6)
                 {
-                    logger.LogInfo($"Reaper Spawn Total of {reaperSpawnTotal} varied by {_var_reaper_spawns}");
-                    reaperSpawnTotal += _var_reaper_spawns;
+                    logger.LogInfo($"Reaper Spawn Total of {reaperSpawnTotal} varied by {var_reaper_spawns}");
+                    reaperSpawnTotal += var_reaper_spawns;
                 }
 
-                if (_ghost_intensity != 0 && _ghost_intensity != 6)
+                if (ghost_intensity != 0 && ghost_intensity != 6)
                 {
-                    logger.LogInfo($"Ghost Spawn Total of {ghostSpawnTotal} varied by {_var_ghost_spawns}");
-                    ghostSpawnTotal += _var_ghost_spawns;
+                    logger.LogInfo($"Ghost Spawn Total of {ghostSpawnTotal} varied by {var_ghost_spawns}");
+                    ghostSpawnTotal += var_ghost_spawns;
                 }
             }
 
@@ -257,28 +257,13 @@ namespace MoreLeviathanSpawns
     [Menu("More Leviathan Spawns")]
     public class Config : Nautilus.Json.ConfigFile
     {
-        //DEBUG!! Numbers testing, showing how much each intensity rounds to when spawning leviathans
-        //Will use this to determine the randomness setting, likely +-2 spawns, excluding max intensity and 0 spawns
+        //Intensity Table, showing how much each intensity rounds to when spawning leviathans
         //Reaper Spawn Intensity - 1=3, 2=7, 3=11, 4=15, 5=19, 6=23
         //Ghost Spawn Intensity - 1=2, 2=4, 3=7, 4=9, 5=11, 6=14
-        //Reaper 0/6*count = 0
-        //Reaper 1/6*count = 3
-        //Reaper 2/6*count = 7
-        //Reaper 3/6*count = 11
-        //Reaper 4/6*count = 15
-        //Reaper 5/6*count = 19
-        //Reaper 6/6*count = 23
-        //Ghost 0/6*count = 0
-        //Ghost 1/6*count = 2
-        //Ghost 2/6*count = 4
-        //Ghost 3/6*count = 7
-        //Ghost 4/6*count = 9
-        //Ghost 5/6*count = 11
-        //Ghost 6/6*count = 14
 
-        [Slider("Reaper Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "ReaperSpawnIntensity", Tooltip = "Defines intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add 3 spawns. A value of 6 will add 23 spawns. A value of 0 will add no additional reaper leviathan spawns to game.")]
+        [Slider("Reaper Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "ReaperSpawnIntensity", Tooltip = "Defines intensity of additional reaper leviathan spawns to add to the game. A value of 1 will add 3 spawns. A value of 6 will add 23 spawns. A value of 0 will add no additional reaper leviathans spawns to game.")]
         public int ReaperSpawnIntensity = 3;
-        [Slider("Ghost Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "GhostSpawnIntensity", Tooltip = "Defines intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 1 - 3 spawns. A value of 6 will add roughly 12 - 14 spawns. A value of 0 will add no additional ghost leviathan spawns to game.")]
+        [Slider("Ghost Spawn Intensity", Min = 0, Max = 6, DefaultValue = 3, Step = 1, Id = "GhostSpawnIntensity", Tooltip = "Defines intensity of additional ghost leviathan spawns to add to the game. A value of 1 will add roughly 2 spawns. A value of 6 will add roughly 14 spawns. A value of 0 will add no additional ghost leviathans spawns to game.")]
         public int GhostSpawnIntensity = 3;
         [Toggle("Add variable spawns?", Id = "AddVariableSpawns", Tooltip = "By default, a static amount of spawns will be added. By selecting this, that amount could be anywhere from 2 more to 2 less than expected, adding some variability on creation.")]
         public bool AddVariableSpawns = false;
