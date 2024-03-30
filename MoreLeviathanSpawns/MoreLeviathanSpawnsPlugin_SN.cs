@@ -134,9 +134,12 @@ namespace MoreLeviathanSpawns
                 //Check first if the mod is enabled (spawn intensity > 0 and coord file populated) before running the command
                 if (!(saveCoords.ReaperCoords is null))
                 {
+                    //Set total count of both types of leviathans for reference
                     int reaper_count = saveCoords.ReaperCoords.Count;
                     int ghost_count = saveCoords.GhostCoords.Count;
 
+                    //Attempt to warp to reaper or ghost leviathan, if attempted index is within the range of either of the totals of both leivathans
+                    //'1' to 'total number of reapers' = reaper warp, 'total numbers of reapers' + 1 to 'total number of reapers' + 'total number of ghosts' = ghost warp
                     if (index >= 1 && index <= (reaper_count + ghost_count))
                     {
                         if (index <= reaper_count)
@@ -194,18 +197,18 @@ namespace MoreLeviathanSpawns
             {
                 var reaper_intensity = saveCoords.ReaperSpawnIntensity;
                 var ghost_intensity = saveCoords.GhostSpawnIntensity;
-                //Only do this if the spawns are neither 0 nor set to max
-                int var_reaper_spawns = rnd.Next(-2, 2);
-                int var_ghost_spawns = rnd.Next(-2, 2);
 
+                //Only account for variable spawns if the spawns are neither 0 nor set to max
                 if (reaper_intensity != 0 && reaper_intensity != 6)
                 {
+                    int var_reaper_spawns = rnd.Next(-2, 2);
                     logger.LogInfo($"Reaper Spawn Total of {reaperSpawnTotal} varied by {var_reaper_spawns}");
                     reaperSpawnTotal += var_reaper_spawns;
                 }
 
                 if (ghost_intensity != 0 && ghost_intensity != 6)
                 {
+                    int var_ghost_spawns = rnd.Next(-2, 2);
                     logger.LogInfo($"Ghost Spawn Total of {ghostSpawnTotal} varied by {var_ghost_spawns}");
                     ghostSpawnTotal += var_ghost_spawns;
                 }
@@ -221,8 +224,7 @@ namespace MoreLeviathanSpawns
                 //Select an index of the ReaperCoords list randomly, and add that reaper coordinate to the new coord file
                 int j = rnd.Next(0, spawnData.ReaperCoords.Count - 1);
 
-                logger.LogInfo($"Random selection of Reaper Coord #{j + 1}");
-                logger.LogInfo($"Adding Reaper spawn #{i + 1} - Coords: {spawnData.ReaperCoords[j]}");
+                logger.LogInfo($"Adding Reaper spawn #{i + 1} ({j + 1}) - Coords: {spawnData.ReaperCoords[j]}");
 
                 //Add the selected reaper coordinate to the new coord file
                 saveCoords.ReaperCoords.Add(spawnData.ReaperCoords[j]);
@@ -240,8 +242,7 @@ namespace MoreLeviathanSpawns
                 //Log whether the ghost leviathan added is an adult or a juvenile
                 string ghostType = "Adult";
                 if (spawnData.GhostCoords[j].GhostType == 2) { ghostType = "Juvenile"; }
-                logger.LogInfo($"Random selection of Ghost {ghostType} Coord #{j + 1}");
-                logger.LogInfo($"Adding Ghost ({ghostType}) spawn #{i + 1} - Coords: {spawnData.GhostCoords[j].Coord}");
+                logger.LogInfo($"Adding Ghost ({ghostType}) spawn #{i + 1} ({j + 1}) - Coords: {spawnData.GhostCoords[j].Coord}");
 
                 //Add the selected ghost coordinate to the new coord file
                 saveCoords.GhostCoords.Add(spawnData.GhostCoords[j]);

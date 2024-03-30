@@ -105,7 +105,6 @@ namespace MoreLeviathanSpawns
         //14 Ghost Coordinates
         public List<GhostCoordsAndType> GhostCoords = new List<GhostCoordsAndType>
         {
-            //NOTE!! Should I be using "new int 1"?
             new GhostCoordsAndType { Coord = new Vector3( -284, -293, 1100 ), GhostType = 1 }, //Adult, Underwater Islands, North
             new GhostCoordsAndType { Coord = new Vector3( 1065, -211, 466 ), GhostType = 1 }, //Adult, Bulb Zone, East-North-East
             new GhostCoordsAndType { Coord = new Vector3( 876, -122, 881 ), GhostType = 1 }, //Adult, Bulb Zone, North-East
