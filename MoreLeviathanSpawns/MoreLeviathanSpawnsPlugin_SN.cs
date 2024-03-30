@@ -102,9 +102,9 @@ namespace MoreLeviathanSpawns
                 //DEBUG!! Display values being loaded; check again if coords file is null, due to spawn intensity 0 otherwise causing issues
                 if (!(coords.ReaperCoords is null))
                 {
-                    ErrorMessage.AddMessage($"Loading Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
-                    ErrorMessage.AddMessage($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
+                    //ErrorMessage.AddMessage($"Loading Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
                     logger.LogInfo($"Loading Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
+                    //ErrorMessage.AddMessage($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
                     logger.LogInfo($"Loaded {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
                 }
             };
@@ -116,9 +116,9 @@ namespace MoreLeviathanSpawns
                 //DEBUG!! Display values being saved; check again if coords file is null, due to spawn intensity 0 otherwise causing issues
                 if (!(coords.ReaperCoords is null))
                 {
-                    ErrorMessage.AddMessage($"Saving Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
-                    ErrorMessage.AddMessage($"Saved {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
+                    //ErrorMessage.AddMessage($"Saving Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
                     logger.LogInfo($"Saving Reaper Spawn Intensity - {coords.ReaperSpawnIntensity}, Ghost Spawn Intensity - {coords.GhostSpawnIntensity}");
+                    //ErrorMessage.AddMessage($"Saved {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
                     logger.LogInfo($"Saved {coords.ReaperCoords.Count + coords.GhostCoords.Count} leviathan coords");
                 }
             };
