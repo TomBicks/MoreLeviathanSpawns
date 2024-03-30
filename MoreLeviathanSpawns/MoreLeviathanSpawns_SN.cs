@@ -1,13 +1,8 @@
-﻿using HarmonyLib;
-//using System;
-//using System.IO;
-using BepInEx.Logging;
-using Nautilus.Json;
-using Nautilus.Handlers;
-using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine;
-//using System.Xml.Serialization;
+using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
+using Nautilus.Handlers;
+using HarmonyLib;
 
 namespace MoreLeviathanSpawns
 {
