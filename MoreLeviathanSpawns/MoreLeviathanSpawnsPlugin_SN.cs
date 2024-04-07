@@ -126,13 +126,31 @@ namespace MoreLeviathanSpawns
             ConsoleCommandsHandler.RegisterConsoleCommands(typeof(LeviathanCommands));
         }
 
+        public static bool ModEnabled()
+        {
+            //Check first if the mod is enabled (if coord file populated) before running the command
+            //If not even reapercoords was populated, neither will ghost, so this shows coord file is empty
+
+            var mod_enabled = !(saveCoords.ReaperCoords is null);
+
+            //Display error message if command is attempted without mod being enabled
+            if (!mod_enabled)
+            {
+                ErrorMessage.AddError($"Mod is not enabled! Please set Spawn Intensity to above 0 and restart to enable.");
+                logger.LogError($"Mod is not enabled! Please set Spawn Intensity to above 0 and restart to enable.");
+            }
+
+            return mod_enabled;
+        }
+
         public static class LeviathanCommands
         {
             [ConsoleCommand("coordwarp")]
             public static void CoordWarp(int index)
             {
-                //Check first if the mod is enabled (spawn intensity > 0 and coord file populated) before running the command
-                if (!(saveCoords.ReaperCoords is null))
+                //Check first if the mod is enabled (if coord file populated) before running the command
+                //If not even reapercoords was populated, neither will ghost, so this works as a test
+                if (ModEnabled())
                 {
                     //Set total count of both types of leviathans for reference
                     int reaper_count = saveCoords.ReaperCoords.Count;
@@ -161,10 +179,18 @@ namespace MoreLeviathanSpawns
                         logger.LogError($"Index {index} out of bounds!");
                     }
                 }
-                else
+            }
+
+            [ConsoleCommand("leviathantotal")]
+            public static void LeviathanTotal()
+            {
+                //Check first if the mod is enabled (if coord file populated) before running the command
+                if (ModEnabled())
                 {
-                    ErrorMessage.AddMessage($"Mod is not enabled! Please set Spawn Intensity to above 0 and restart to enable.");
-                    logger.LogError($"Mod is not enabled! Please set Spawn Intensity to above 0 and restart to enable.");
+                    var reaperTotal = saveCoords.ReaperCoords.Count;
+                    var ghostTotal = saveCoords.GhostCoords.Count;
+                    ErrorMessage.AddMessage($"{reaperTotal + ghostTotal} leviathans spawned\n{reaperTotal} Reapers spawned and {ghostTotal} Ghosts spawned");
+                    logger.LogInfo($"{reaperTotal + ghostTotal} leviathans spawned; {reaperTotal} Reapers spawned and {ghostTotal} Ghosts spawned");
                 }
             }
         }
