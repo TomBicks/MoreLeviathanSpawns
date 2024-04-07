@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LeviathanCommands.cs" />
     <Compile Include="MoreLeviathanSpawnsPlugin_SN.cs" />
     <Compile Include="MoreLeviathanSpawns_SN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
