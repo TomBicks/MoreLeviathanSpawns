@@ -3,6 +3,12 @@ using Nautilus.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
 using System.Collections.Generic;
 using UnityEngine;
+using static VoxelandChunk;
+using AhoCorasick;
+using Oculus.Platform;
+using static OVRInput;
+using System.Security.Policy;
+using UWE;
 
 namespace MoreLeviathanSpawns
 {
@@ -126,6 +132,54 @@ namespace MoreLeviathanSpawns
             new GhostCoords { Coord = new Vector3( -196, -436, 1056 ), GhostType = 2, ListIndex = 12 }, //Juvenile, Underwater Islands, North
             new GhostCoords { Coord = new Vector3( 1443, -260, 883 ), GhostType = 2, ListIndex = 13 }, //Juvenile, Bulb Zone, North-East
             new GhostCoords { Coord = new Vector3( 1075, -475, 944 ), GhostType = 2, ListIndex = 14 } //Juvenile, Mountains, North-East (Lost River Entrance)
+        };
+    }
+
+    public class LeviathanLocations
+    {
+        public List<string> ReaperLocations = new List<string>
+        {
+
+            "Grassy Plateaus, South",
+            "Bulb Zone, East-North-East",
+            "Mountains, North",
+            "Grand Reef, South-South-West",
+            "Grand Reef, South",
+            "Kelp Forest, West",
+            "Kelp Forest, North",
+            "Mushroom Forest, East",
+            "Mushroom Forest, East",
+            "Crag Field, South",
+            "Sparse Reef, South-West",
+            "Grand Reef, South-South-West (Under Floating Island)",
+            "Kelp Forest, South",
+            "Grassy Plateaus, South-West",
+            "Mushroom Forest, North-West",
+            "Mushroom Forest, West-North-West",
+            "Grassy Plateaus, ",
+            "Underwater Islands, North",
+            "Mushroom Forest, North-West",
+            "Sea Treader's Path, West-South-West",
+            "Blood Kelp Zone, North-North-West",
+            "Kelp Forest, North-North-East",
+            "Grassy Plateaus, East"
+        };
+        public List<string> GhostLocations = new List<string>
+        {
+            "Underwater Islands, North",
+            "Bulb Zone, East-North-East",
+            "Bulb Zone, North-East",
+            "Mountains, North",
+            "Jellyshroom Cave, South",
+            "Grand Reef, South",
+            "Blood Kelp Trench, South-West",
+            "Lost River, West-North-West (Tree Cove)",
+            "Grand Reef, South-South-West (Degasi Base)",
+            "Jellyshroom Cave, West",
+            "Underwater Islands, North",
+            "Underwater Islands, North",
+            "Bulb Zone, North-East",
+            "Mountains, North-East (Lost River Entrance)"
         };
     }
 }

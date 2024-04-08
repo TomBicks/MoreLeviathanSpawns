@@ -5,6 +5,7 @@ namespace MoreLeviathanSpawns
 {
     public static class LeviathanCommands
     {
+        //Warps the player to the desired leviathan
         [ConsoleCommand("coordwarp")]
         public static void CoordWarp(int index)
         {
@@ -41,6 +42,7 @@ namespace MoreLeviathanSpawns
             }
         }
 
+        //Lists the total number of each type of leviathan spawned in the save
         [ConsoleCommand("leviathantotal")]
         public static void LeviathanTotal()
         {
@@ -51,6 +53,19 @@ namespace MoreLeviathanSpawns
                 var ghostTotal = saveCoords.GhostCoords.Count;
                 ErrorMessage.AddMessage($"{reaperTotal + ghostTotal} leviathans spawned\n{reaperTotal} Reapers spawned and {ghostTotal} Ghosts spawned");
                 logger.LogInfo($"{reaperTotal + ghostTotal} leviathans spawned; {reaperTotal} Reapers spawned and {ghostTotal} Ghosts spawned");
+            }
+        }
+
+        //Lists the textual location of each leviathan spawned in the world
+        [ConsoleCommand("leviathanlist")]
+        public static void LeviathanList()
+        {
+            //Check first if the mod is enabled (if coord file populated) before running the command
+            if (ModEnabled())
+            {
+                var reaperTotal = saveCoords.ReaperCoords.Count;
+                var ghostTotal = saveCoords.GhostCoords.Count;
+                //...
             }
         }
     }
