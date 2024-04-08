@@ -17,7 +17,7 @@ namespace MoreLeviathanSpawns
     {
         private const string myGUID = "com.haulinoats.moreleviathanspawnssn";
         private const string pluginName = "More Leviathan Spawns";
-        private const string versionString = "3.0.0";
+        private const string versionString = "3.1.0";
 
         private static readonly Harmony harmony = new Harmony(myGUID);
 
@@ -33,8 +33,8 @@ namespace MoreLeviathanSpawns
             public float ReaperSpawnIntensity { get; set; }
             public float GhostSpawnIntensity { get; set; }
 
-            public List<Vector3> ReaperCoords { get; set; }
-            public List<GhostCoordsAndType> GhostCoords { get; set; }
+            public List<ReaperCoords> ReaperCoords { get; set; }
+            public List<GhostCoords> GhostCoords { get; set; }
         }
 
         public void Awake()
@@ -158,8 +158,8 @@ namespace MoreLeviathanSpawns
             int ghostSpawnTotal = (int)(saveCoords.GhostSpawnIntensity / 6 * spawnData.GhostCoords.Count);
 
             //Create a list for both sets of coords; we will be adding selected coordinates to these lists, for the new coord file
-            saveCoords.ReaperCoords = new List<Vector3>();
-            saveCoords.GhostCoords = new List<GhostCoordsAndType>();
+            saveCoords.ReaperCoords = new List<ReaperCoords>();
+            saveCoords.GhostCoords = new List<GhostCoords>();
 
             /*Reseed random number generator; used to add or subtract from the amount of spawns if variable spawns is enabled 
              and generate random selection of coordinates to add to the new coord file*/

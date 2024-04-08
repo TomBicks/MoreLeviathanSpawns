@@ -24,7 +24,7 @@ namespace MoreLeviathanSpawns
                     {
                         ErrorMessage.AddMessage($"Teleporting to Reaper coord #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
                         logger.LogInfo($"Teleporting to Reaper coord #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
-                        Player.main.SetPosition(saveCoords.ReaperCoords[index - 1]);
+                        Player.main.SetPosition(saveCoords.ReaperCoords[index - 1].Coord);
                     }
                     else
                     {
