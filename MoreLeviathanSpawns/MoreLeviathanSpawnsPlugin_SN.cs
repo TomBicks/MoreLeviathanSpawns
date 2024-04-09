@@ -223,6 +223,53 @@ namespace MoreLeviathanSpawns
                 spawnData.GhostCoords.RemoveAt(j);
             }
         }
+
+        //Textual list of reaper locations, sorted the same as the coords in SpawnData
+        public static readonly List<string> ReaperLocations = new List<string>
+        {
+            "Grassy Plateaus, South",
+            "Bulb Zone, East-North-East",
+            "Mountains, North",
+            "Grand Reef, South-South-West",
+            "Grand Reef, South",
+            "Kelp Forest, West",
+            "Kelp Forest, North",
+            "Mushroom Forest, East",
+            "Mushroom Forest, East",
+            "Crag Field, South",
+            "Sparse Reef, South-West",
+            "Grand Reef, South-South-West (Under Floating Island)",
+            "Kelp Forest, South",
+            "Grassy Plateaus, South-West",
+            "Mushroom Forest, North-West",
+            "Mushroom Forest, West-North-West",
+            "Grassy Plateaus, ",
+            "Underwater Islands, North",
+            "Mushroom Forest, North-West",
+            "Sea Treader's Path, West-South-West",
+            "Blood Kelp Zone, North-North-West",
+            "Kelp Forest, North-North-East",
+            "Grassy Plateaus, East"
+        };
+
+        //Textual list of ghost locations, sorted the same as the coords in SpawnData
+        public static readonly List<string> GhostLocations = new List<string>
+        {
+            "Underwater Islands, North",
+            "Bulb Zone, East-North-East",
+            "Bulb Zone, North-East",
+            "Mountains, North",
+            "Jellyshroom Cave, South",
+            "Grand Reef, South",
+            "Blood Kelp Trench, South-West",
+            "Lost River, West-North-West (Tree Cove)",
+            "Grand Reef, South-South-West (Degasi Base)",
+            "Jellyshroom Cave, West",
+            "Underwater Islands, North",
+            "Underwater Islands, North",
+            "Bulb Zone, North-East",
+            "Mountains, North-East (Lost River Entrance)"
+        };
     }
 
     [Menu("More Leviathan Spawns")]

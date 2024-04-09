@@ -73,7 +73,7 @@ namespace MoreLeviathanSpawns
                     {
                         var reaper = saveCoords.ReaperCoords[i];
 
-                        ErrorMessage.AddMessage($"Reaper spawn #{i+1} ({reaper.ListIndex}) ");
+                        ErrorMessage.AddMessage($"Reaper spawn #{i+1} ({reaper.ListIndex}) located at {ReaperLocations[reaper.ListIndex]}");
                         logger.LogMessage($"No Reapers spawned to list");
                     }
                 }
