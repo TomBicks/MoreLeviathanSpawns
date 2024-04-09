@@ -14,29 +14,29 @@ namespace MoreLeviathanSpawns
             if (ModEnabled())
             {
                 //Set total count of both types of leviathans for reference
-                int reaper_count = saveCoords.ReaperCoords.Count;
-                int ghost_count = saveCoords.GhostCoords.Count;
+                int reaperCount = saveCoords.ReaperCoords.Count;
+                int ghostCount = saveCoords.GhostCoords.Count;
 
                 //Attempt to warp to reaper or ghost leviathan, if attempted index is within the range of either of the totals of both leivathans
                 //'1' to 'total number of reapers' = reaper warp, 'total numbers of reapers' + 1 to 'total number of reapers' + 'total number of ghosts' = ghost warp
-                if (index >= 1 && index <= (reaper_count + ghost_count))
+                if (index >= 1 && index <= (reaperCount + ghostCount))
                 {
-                    if (index <= reaper_count)
+                    if (index <= reaperCount)
                     {
-                        ErrorMessage.AddMessage($"Teleporting to Reaper coord #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
-                        logger.LogInfo($"Teleporting to Reaper coord #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
+                        ErrorMessage.AddMessage($"Teleporting to Reaper spawn #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
+                        logger.LogInfo($"Teleporting to Reaper spawn #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
                         Player.main.SetPosition(saveCoords.ReaperCoords[index - 1].Coord);
                     }
                     else
                     {
-                        ErrorMessage.AddMessage($"Teleporting to Ghost coord #{index - reaper_count} - Coords: {saveCoords.GhostCoords[index - reaper_count - 1].Coord}");
-                        logger.LogInfo($"Teleporting to Ghost coord #{index - reaper_count} - Coords: {saveCoords.GhostCoords[index - reaper_count - 1].Coord}");
-                        Player.main.SetPosition(saveCoords.GhostCoords[index - reaper_count - 1].Coord);
+                        ErrorMessage.AddMessage($"Teleporting to Ghost spawn #{index - reaperCount} - Coords: {saveCoords.GhostCoords[index - reaperCount - 1].Coord}");
+                        logger.LogInfo($"Teleporting to Ghost spawn #{index - reaperCount} - Coords: {saveCoords.GhostCoords[index - reaperCount - 1].Coord}");
+                        Player.main.SetPosition(saveCoords.GhostCoords[index - reaperCount - 1].Coord);
                     }
                 }
                 else
                 {
-                    ErrorMessage.AddMessage($"Index {index} out of bounds!");
+                    ErrorMessage.AddError($"Index {index} out of bounds!");
                     logger.LogError($"Index {index} out of bounds!");
                 }
             }
@@ -65,6 +65,24 @@ namespace MoreLeviathanSpawns
             {
                 var reaperTotal = saveCoords.ReaperCoords.Count;
                 var ghostTotal = saveCoords.GhostCoords.Count;
+
+                //List textual locations of each reaper, if any exist
+                if(reaperTotal > 0)
+                {
+                    for (var i = 0; i < reaperTotal; i++)
+                    {
+                        var reaper = saveCoords.ReaperCoords[i];
+
+                        ErrorMessage.AddMessage($"Reaper spawn #{i+1} ({reaper.ListIndex}) ");
+                        logger.LogMessage($"No Reapers spawned to list");
+                    }
+                }
+                else
+                {
+                    ErrorMessage.AddMessage("No Reapers spawned to list");
+                    logger.LogMessage($"No Reapers spawned to list");
+                }
+                
                 //...
             }
         }

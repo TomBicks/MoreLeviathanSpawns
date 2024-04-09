@@ -3,12 +3,6 @@ using Nautilus.Handlers;
 using static MoreLeviathanSpawns.MoreLeviathanSpawnsPlugin_SN;
 using System.Collections.Generic;
 using UnityEngine;
-using static VoxelandChunk;
-using AhoCorasick;
-using Oculus.Platform;
-using static OVRInput;
-using System.Security.Policy;
-using UWE;
 
 namespace MoreLeviathanSpawns
 {
@@ -54,19 +48,19 @@ namespace MoreLeviathanSpawns
             {
                 for (int i = 0; i < saveCoords.GhostCoords.Count; i++)
                 {
-                    GhostCoords __ghostCoord = saveCoords.GhostCoords[i];
+                    GhostCoords ghostCoord = saveCoords.GhostCoords[i];
 
                     //Determine whether ghost to spawn is an adult or juvenile; defaults to adult
-                    string __ghostType = "Adult";
-                    TechType __ghostTechType = TechType.GhostLeviathan;
-                    if (__ghostCoord.GhostType == 2)
+                    string ghostType = "Adult";
+                    TechType ghostTechType = TechType.GhostLeviathan;
+                    if (ghostCoord.GhostType == 2)
                     {
-                        __ghostType = "Juvenile";
-                        __ghostTechType = TechType.GhostLeviathanJuvenile;
+                        ghostType = "Juvenile";
+                        ghostTechType = TechType.GhostLeviathanJuvenile;
                     }
 
-                    logger.LogInfo($"Spawning Ghost {__ghostType} spawn #{i + 1} - Coords: {__ghostCoord.Coord}");
-                    CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(__ghostTechType, __ghostCoord.Coord));
+                    logger.LogInfo($"Spawning Ghost {ghostType} spawn #{i + 1} - Coords: {ghostCoord.Coord}");
+                    CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(ghostTechType, ghostCoord.Coord));
                 }
             }
         }
@@ -137,9 +131,8 @@ namespace MoreLeviathanSpawns
 
     public class LeviathanLocations
     {
-        public List<string> ReaperLocations = new List<string>
+        public readonly List<string> ReaperLocations = new List<string>
         {
-
             "Grassy Plateaus, South",
             "Bulb Zone, East-North-East",
             "Mountains, North",
@@ -164,7 +157,7 @@ namespace MoreLeviathanSpawns
             "Kelp Forest, North-North-East",
             "Grassy Plateaus, East"
         };
-        public List<string> GhostLocations = new List<string>
+        public readonly List<string> GhostLocations = new List<string>
         {
             "Underwater Islands, North",
             "Bulb Zone, East-North-East",

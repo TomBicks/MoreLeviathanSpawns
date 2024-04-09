@@ -6,7 +6,6 @@ using Nautilus.Json.Attributes;
 using Nautilus.Json;
 using Nautilus.Options.Attributes;
 using System.Collections.Generic;
-using UnityEngine;
 
 #pragma warning disable IDE1006 // Suppress warnings related to "Naming Styles"
 
@@ -130,16 +129,16 @@ namespace MoreLeviathanSpawns
             //Check first if the mod is enabled (if coord file populated) before running the command
             //If not even reapercoords was populated, neither will ghost, so this shows coord file is empty
 
-            var mod_enabled = !(saveCoords.ReaperCoords is null);
+            var modEnabled = !(saveCoords.ReaperCoords is null);
 
             //Display error message if command is attempted without mod being enabled
-            if (!mod_enabled)
+            if (!modEnabled)
             {
                 ErrorMessage.AddError($"Mod is not enabled! Please set Spawn Intensity to above 0 and restart to enable.");
                 logger.LogError($"Mod is not enabled! Please set Spawn Intensity to above 0 and restart to enable.");
             }
 
-            return mod_enabled;
+            return modEnabled;
         }
 
         static void PopulateCoordArray()
@@ -168,18 +167,18 @@ namespace MoreLeviathanSpawns
             //If variable spawns have been selected determine random amount to add or subtract from the amount (could still be 0 difference)
             if (config.AddVariableSpawns)
             {
-                var reaper_intensity = saveCoords.ReaperSpawnIntensity;
-                var ghost_intensity = saveCoords.GhostSpawnIntensity;
+                var reaperIntensity = saveCoords.ReaperSpawnIntensity;
+                var ghostIntensity = saveCoords.GhostSpawnIntensity;
 
                 //Only account for variable spawns if the spawns are neither 0 nor set to max
-                if (reaper_intensity != 0 && reaper_intensity != 6)
+                if (reaperIntensity != 0 && reaperIntensity != 6)
                 {
-                    int var_reaper_spawns = rnd.Next(-2, 2);
-                    logger.LogInfo($"Reaper Spawn Total of {reaperSpawnTotal} varied by {var_reaper_spawns}");
-                    reaperSpawnTotal += var_reaper_spawns;
+                    int varReaperSpawns = rnd.Next(-2, 2);
+                    logger.LogInfo($"Reaper Spawn Total of {reaperSpawnTotal} varied by {varReaperSpawns}");
+                    reaperSpawnTotal += varReaperSpawns;
                 }
 
-                if (ghost_intensity != 0 && ghost_intensity != 6)
+                if (ghostIntensity != 0 && ghostIntensity != 6)
                 {
                     int var_ghost_spawns = rnd.Next(-2, 2);
                     logger.LogInfo($"Ghost Spawn Total of {ghostSpawnTotal} varied by {var_ghost_spawns}");
