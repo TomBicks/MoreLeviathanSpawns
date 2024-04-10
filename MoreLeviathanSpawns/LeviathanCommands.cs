@@ -23,8 +23,8 @@ namespace MoreLeviathanSpawns
                 {
                     if (index <= reaperCount)
                     {
-                        ErrorMessage.AddMessage($"Teleporting to Reaper spawn #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
-                        logger.LogInfo($"Teleporting to Reaper spawn #{index} - Coords: {saveCoords.ReaperCoords[index - 1]}");
+                        ErrorMessage.AddMessage($"Teleporting to Reaper spawn #{index} - Coords: {saveCoords.ReaperCoords[index - 1].Coord}");
+                        logger.LogInfo($"Teleporting to Reaper spawn #{index} - Coords: {saveCoords.ReaperCoords[index - 1].Coord}");
                         Player.main.SetPosition(saveCoords.ReaperCoords[index - 1].Coord);
                     }
                     else
@@ -73,8 +73,8 @@ namespace MoreLeviathanSpawns
                     {
                         var reaper = saveCoords.ReaperCoords[i];
 
-                        ErrorMessage.AddMessage($"Reaper spawn #{i+1} ({reaper.ListIndex}) located at {ReaperLocations[reaper.ListIndex]}");
-                        logger.LogMessage($"No Reapers spawned to list");
+                        ErrorMessage.AddMessage($"Reaper spawn #{i+1} ({reaper.ListIndex}) located at {ReaperLocations[reaper.ListIndex]} - Coords: {reaper.Coord}");
+                        logger.LogMessage($"Reaper spawn #{i + 1} ({reaper.ListIndex}) located at {ReaperLocations[reaper.ListIndex]} - Coords: {reaper.Coord}");
                     }
                 }
                 else
@@ -82,8 +82,23 @@ namespace MoreLeviathanSpawns
                     ErrorMessage.AddMessage("No Reapers spawned to list");
                     logger.LogMessage($"No Reapers spawned to list");
                 }
-                
-                //...
+
+                //List textual locations of each ghost, if any exist
+                if (ghostTotal > 0)
+                {
+                    for (var i = 0; i < ghostTotal; i++)
+                    {
+                        var ghost = saveCoords.GhostCoords[i];
+
+                        ErrorMessage.AddMessage($"Ghost spawn #{i + 1} ({ghost.ListIndex}) located at {GhostLocations[ghost.ListIndex]} - Coords: {ghost.Coord}");
+                        logger.LogMessage($"Ghost spawn #{i + 1} ({ghost.ListIndex}) located at {GhostLocations[ghost.ListIndex]} - Coords: {ghost.Coord}");
+                    }
+                }
+                else
+                {
+                    ErrorMessage.AddMessage("No Ghosts spawned to list");
+                    logger.LogMessage($"No Ghosts spawned to list");
+                }
             }
         }
     }
