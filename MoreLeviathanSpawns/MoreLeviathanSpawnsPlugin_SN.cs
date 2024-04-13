@@ -6,6 +6,8 @@ using Nautilus.Json.Attributes;
 using Nautilus.Json;
 using Nautilus.Options.Attributes;
 using System.Collections.Generic;
+using System;
+using Discord;
 
 #pragma warning disable IDE1006 // Suppress warnings related to "Naming Styles"
 
@@ -95,6 +97,12 @@ namespace MoreLeviathanSpawns
                 else
                 {
                     logger.LogInfo("Coord File is already populated!");
+
+                    //Check if the coord file needs updating
+                    if(CoordUpdateNeeded())
+                    {
+                        UpdateCoords();
+                    }
                 }
 
                 //DEBUG!! Display values being loaded; check again if coords file is null, due to spawn intensity 0 otherwise causing issues
@@ -128,7 +136,6 @@ namespace MoreLeviathanSpawns
         {
             //Check first if the mod is enabled (if coord file populated) before running the command
             //If not even reapercoords was populated, neither will ghost, so this shows coord file is empty
-
             var modEnabled = !(saveCoords.ReaperCoords is null);
 
             //Display error message if command is attempted without mod being enabled
@@ -139,6 +146,29 @@ namespace MoreLeviathanSpawns
             }
 
             return modEnabled;
+        }
+
+        public bool CoordUpdateNeeded()
+        {
+            /*NOTE!! According to Eldritch, "json deserializing creates an instance of a class first, and then sets the fields it found in 
+             he json. So if it doesn’t find a field in the json, it just won’t set that field on the instance. So that field will still 
+             be whatever the default value is for it"
+             What this means is, that whenever I'm checking for a field that shouldn't exist in an older save-file, it will default to
+             whatever the default value *currently* is in the relating class and field! So it should be super simple in future to check.
+             Also learned that some data types are inherently non-nullable, hence why ListIndex returned 0 by default despite not existing.
+             Thus, depending on the data type I check for existance in future, I will need to either check for a default value, 0, or null.*/
+
+            //Check for the specific outdated change; if found, the coord file needs to be updated
+            bool updateNeeded = saveCoords.ReaperCoords[0].ListIndex == -1;
+
+            return updateNeeded;
+        }
+
+        //Function to call if I need to update the coords file at all without breaking the user's registered spawns
+        //This function will change depending on what differences I'm searching for between the outdated and updated versions of the mod and coord file
+        public void UpdateCoords()
+        {
+
         }
 
         static void PopulateCoordArray()

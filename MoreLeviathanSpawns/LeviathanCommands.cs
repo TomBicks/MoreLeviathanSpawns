@@ -60,6 +60,9 @@ namespace MoreLeviathanSpawns
         [ConsoleCommand("leviathanlist")]
         public static void LeviathanList()
         {
+            //ERROR!! Only 28 lines of text can be displayed on the screen at once, and they don't fade and cycle, so 28 is the max I can use
+            //Thus, need to make my messages either not use new lines, or use less characters!
+
             //Check first if the mod is enabled (if coord file populated) before running the command
             if (ModEnabled())
             {
@@ -73,8 +76,8 @@ namespace MoreLeviathanSpawns
                     {
                         var reaper = saveCoords.ReaperCoords[i];
 
-                        ErrorMessage.AddMessage($"Reaper spawn #{i+1} ({reaper.ListIndex}) located at {ReaperLocations[reaper.ListIndex]} - Coords: {reaper.Coord}");
-                        logger.LogMessage($"Reaper spawn #{i + 1} ({reaper.ListIndex}) located at {ReaperLocations[reaper.ListIndex]} - Coords: {reaper.Coord}");
+                        ErrorMessage.AddMessage($"Reaper spawn #{i + 1} located at {ReaperLocations[reaper.ListIndex]} - Coords: {reaper.Coord}");
+                        logger.LogMessage($"Reaper spawn #{i + 1} ({reaper.ListIndex + 1}) located at {ReaperLocations[reaper.ListIndex]} - Coords: {reaper.Coord}");
                     }
                 }
                 else
@@ -90,8 +93,8 @@ namespace MoreLeviathanSpawns
                     {
                         var ghost = saveCoords.GhostCoords[i];
 
-                        ErrorMessage.AddMessage($"Ghost spawn #{i + 1} ({ghost.ListIndex}) located at {GhostLocations[ghost.ListIndex]} - Coords: {ghost.Coord}");
-                        logger.LogMessage($"Ghost spawn #{i + 1} ({ghost.ListIndex}) located at {GhostLocations[ghost.ListIndex]} - Coords: {ghost.Coord}");
+                        ErrorMessage.AddMessage($"Ghost spawn #{i + 1} located at {GhostLocations[ghost.ListIndex]} - Coords: {ghost.Coord}");
+                        logger.LogMessage($"Ghost spawn #{i + 1} ({ghost.ListIndex + 1}) located at {GhostLocations[ghost.ListIndex]} - Coords: {ghost.Coord}");
                     }
                 }
                 else
