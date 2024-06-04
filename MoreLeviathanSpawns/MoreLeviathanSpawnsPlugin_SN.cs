@@ -6,8 +6,7 @@ using Nautilus.Json.Attributes;
 using Nautilus.Json;
 using Nautilus.Options.Attributes;
 using System.Collections.Generic;
-using System;
-using Discord;
+using UnityEngine;
 
 #pragma warning disable IDE1006 // Suppress warnings related to "Naming Styles"
 
@@ -158,8 +157,16 @@ namespace MoreLeviathanSpawns
              Also learned that some data types are inherently non-nullable, hence why ListIndex returned 0 by default despite not existing.
              Thus, depending on the data type I check for existance in future, I will need to either check for a default value, 0, or null.*/
 
+            //NOTE!! Essence mentioned using 'int?' could be a good alternative to, making an int nullable to always test for a null value
+
             //Check for the specific outdated change; if found, the coord file needs to be updated
             bool updateNeeded = saveCoords.ReaperCoords[0].ListIndex == -1;
+
+            //Log whether update is needed
+            if(updateNeeded)
+            {
+                logger.LogWarning($"Coord File requires updating from mod version 3.0.0 to {versionString}");
+            }
 
             return updateNeeded;
         }
@@ -168,7 +175,90 @@ namespace MoreLeviathanSpawns
         //This function will change depending on what differences I'm searching for between the outdated and updated versions of the mod and coord file
         public void UpdateCoords()
         {
+            logger.LogWarning($"Updating Coord File for mod version {versionString}");
 
+            //Search for the corresponding coordinate in the updated Coord File structure and match it to the coordinate in the older one
+            //NOTE!! Because GhostCoords were already a class, as opposed to ReaperCoords, which was a list at first, we only need to update ReaperCoords
+            if(saveCoords.ReaperSpawnIntensity != 0)
+            {
+                //Create a new list of ReaperCoords, to replace the old format list
+                List<ReaperCoords> newReaperCoords = new List<ReaperCoords>();
+
+                //Create a new spawnData (a fresh list of all coordinates) to replace the older formats with
+                SpawnData spawnData = new SpawnData();
+
+                for (int i = 0; i < saveCoords.ReaperCoords.Count; i++)
+                {
+                    //Obtain the coords of thd old format from saveCoords (saved to the current savefile)
+                    ReaperCoords oldReaperCoord = saveCoords.ReaperCoords[i];
+                    Vector3 oldCoord = new Vector3(oldReaperCoord.X, oldReaperCoord.Y, oldReaperCoord.Z);
+                    logger.LogInfo($"Coord {i}: {oldCoord}");
+
+                    //Obtain the coords of the new format from spawnData and add them to the new list
+                    for(int j = 0; j < spawnData.ReaperCoords.Count; j++)
+                    {
+                        Vector3 newCoord = spawnData.ReaperCoords[j].Coord;
+                        logger.LogInfo($"spawnData coord {j}");
+                        if (spawnData.ReaperCoords[j].Coord == oldCoord)
+                        {
+                            logger.LogInfo($"spawnData coord #{j}: {newCoord} matches coord #{i}: {oldCoord}");
+                            logger.LogInfo($"ListIndex of our match is {spawnData.ReaperCoords[j].ListIndex}");
+                            newReaperCoords.Add(spawnData.ReaperCoords[j]);
+                            break; //If we've found our match, stop looping
+                        }
+                    }
+                }
+
+                //Display old list
+                logger.LogWarning("old list");
+                for (int i = 0; i < saveCoords.ReaperCoords.Count; i++)
+                {
+                    logger.LogWarning($"{saveCoords.ReaperCoords[i].X}");
+                }
+
+                //Display new list
+                logger.LogWarning("new list");
+                for (int i = 0; i < newReaperCoords.Count; i++)
+                {
+                    logger.LogWarning($"{newReaperCoords[i].Coord.x}, List Index = {newReaperCoords[i].ListIndex}");
+                }
+
+                //Replace ReaperCoords in the coord file with the newly formatted ones
+                //saveCoords.ReaperCoords = newReaperCoords;
+            }
+            //!!! THIS IS NOT THE CODE I'M USING; JUST CODE FROM ANOTHER SECTION THAT SHOULD BE USEFUL AS REFERENCE!!!
+            //Register reaper spawns from selected list of coordinates with the CoordinatedSpawnsHandler
+            /*if (saveCoords.ReaperSpawnIntensity != 0)
+            {
+                for (int i = 0; i < saveCoords.ReaperCoords.Count; i++)
+                {
+                    ReaperCoords reaperCoord = saveCoords.ReaperCoords[i];
+
+                    logger.LogInfo($"Spawning Reaper spawn #{i + 1} ({reaperCoord.ListIndex + 1}) - Coords: {reaperCoord.X}");
+                    CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, reaperCoord.Coord));
+                }
+            }
+
+            //Register ghost spawns from selected list of coordinates with the CoordinatedSpawnsHandler
+            if (saveCoords.GhostSpawnIntensity != 0)
+            {
+                for (int i = 0; i < saveCoords.GhostCoords.Count; i++)
+                {
+                    GhostCoords ghostCoord = saveCoords.GhostCoords[i];
+
+                    //Determine whether ghost to spawn is an adult or juvenile; defaults to adult
+                    string ghostType = "Adult";
+                    TechType ghostTechType = TechType.GhostLeviathan;
+                    if (ghostCoord.GhostType == 2)
+                    {
+                        ghostType = "Juvenile";
+                        ghostTechType = TechType.GhostLeviathanJuvenile;
+                    }
+
+                    logger.LogInfo($"Spawning Ghost {ghostType} spawn #{i + 1} ({ghostCoord.ListIndex + 1}) - Coords: {ghostCoord.Coord}");
+                    CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(ghostTechType, ghostCoord.Coord));
+                }
+            }*/
         }
 
         static void PopulateCoordArray()

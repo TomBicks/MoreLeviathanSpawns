@@ -38,7 +38,7 @@ namespace MoreLeviathanSpawns
                 {
                     ReaperCoords reaperCoord = saveCoords.ReaperCoords[i];
 
-                    logger.LogInfo($"Spawning Reaper spawn #{i + 1} ({reaperCoord.ListIndex + 1}) - Coords: {reaperCoord.Coord}");
+                    logger.LogInfo($"Spawning Reaper spawn #{i + 1} ({reaperCoord.ListIndex + 1}) - Coords: {reaperCoord.X}");
                     CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, reaperCoord.Coord));
                 }
             }
@@ -70,6 +70,11 @@ namespace MoreLeviathanSpawns
     {
         public Vector3 Coord { get; set; }
         public int ListIndex = -1;
+
+        //DEBUG!! Used to convert to class ReaperCoords from Vector3 ReaperCoords (will be removed next update)
+        public float X;
+        public float Y;
+        public float Z;
     }
 
     public class GhostCoords
