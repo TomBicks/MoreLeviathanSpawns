@@ -38,7 +38,7 @@ namespace MoreLeviathanSpawns
                 {
                     ReaperCoords reaperCoord = saveCoords.ReaperCoords[i];
 
-                    logger.LogInfo($"Spawning Reaper spawn #{i + 1} ({reaperCoord.ListIndex + 1}) - Coords: {reaperCoord.X}");
+                    logger.LogInfo($"Spawning Reaper spawn #{i + 1} ({reaperCoord.ListIndex + 1}) - Coords: {reaperCoord.Coord}");
                     CoordinatedSpawnsHandler.RegisterCoordinatedSpawn(new SpawnInfo(TechType.ReaperLeviathan, reaperCoord.Coord));
                 }
             }
