@@ -160,7 +160,8 @@ namespace MoreLeviathanSpawns
             //NOTE!! Essence mentioned using 'int?' could be a good alternative to, making an int nullable to always test for a null value
 
             //Check for the specific outdated change; if found, the coord file needs to be updated
-            logger.LogWarning($"ReaperCoords ListIndex = {saveCoords.ReaperCoords[0].ListIndex}, GhostCoords ListIndex = {saveCoords.GhostCoords[0].ListIndex}");
+            //Check for outdated format (no ListIndexes) from version 3.0.0
+            //logger.LogWarning($"ReaperCoords ListIndex = {saveCoords.ReaperCoords[0].ListIndex}, GhostCoords ListIndex = {saveCoords.GhostCoords[0].ListIndex}");
             bool updateNeeded = (saveCoords.ReaperCoords[0].ListIndex == -1 || saveCoords.GhostCoords[0].ListIndex == -1);
 
             //Log whether update is needed
@@ -170,7 +171,7 @@ namespace MoreLeviathanSpawns
             }
             else
             {
-                logger.LogMessage($"Coord File is up to date");
+                logger.LogInfo($"Coord File is up to date");
             }
 
             return updateNeeded;
@@ -198,13 +199,13 @@ namespace MoreLeviathanSpawns
                     //Obtain the coords of thd old format from saveCoords (saved to the current savefile)
                     ReaperCoords oldReaperCoord = saveCoords.ReaperCoords[i];
                     Vector3 oldCoord = new Vector3(oldReaperCoord.X, oldReaperCoord.Y, oldReaperCoord.Z);
-                    logger.LogInfo($"Coord {i}: {oldCoord}");
+                    //logger.LogInfo($"Coord {i}: {oldCoord}");
 
                     //Obtain the coords of the new format from spawnData and add them to the new list
                     for (int j = 0; j < spawnData.ReaperCoords.Count; j++)
                     {
                         Vector3 newCoord = spawnData.ReaperCoords[j].Coord;
-                        logger.LogInfo($"spawnData coord {j}");
+                        //logger.LogInfo($"spawnData coord {j}");
                         if (spawnData.ReaperCoords[j].Coord == oldCoord)
                         {
                             logger.LogInfo($"spawnData coord #{j}: {newCoord} matches coord #{i}: {oldCoord}");
@@ -213,15 +214,10 @@ namespace MoreLeviathanSpawns
                             break; //If we've found our match, stop looping
                         }
                     }
-
-                    //Replace ReaperCoords in the coord file with the newly formatted ones
-                    saveCoords.ReaperCoords = newReaperCoords;
                 }
 
-                //ERROR!! Still need to update the GhostCoords; they don't have ListIndexes!!!
-                //ERROR!! Still need to update the GhostCoords; they don't have ListIndexes!!!
-                //ERROR!! Still need to update the GhostCoords; they don't have ListIndexes!!!
-                //ERROR!! Still need to update the GhostCoords; they don't have ListIndexes!!!
+                //Replace ReaperCoords in the coord file with the newly formatted ones
+                saveCoords.ReaperCoords = newReaperCoords;
             }
 
             //Search for the corresponding ghost coordinate in the updated Coord File structure and match it to the same coordinate in the older one
@@ -229,6 +225,8 @@ namespace MoreLeviathanSpawns
             //NOTE!! Adding the check for list index, in case somehow it tries to update twice and breaks everything
             if (saveCoords.GhostSpawnIntensity != 0 && saveCoords.GhostCoords[0].ListIndex == -1)
             {
+                logger.LogInfo("Running Ghost Updater");
+
                 //Create a new spawnData (a fresh list of all coordinates) to replace the older formats with
                 SpawnData spawnData = new SpawnData();
 
@@ -236,13 +234,13 @@ namespace MoreLeviathanSpawns
                 {
                     //Obtain the coords of thd old format from saveCoords (saved to the current savefile)
                     GhostCoords oldGhostCoord = saveCoords.GhostCoords[i];
-                    logger.LogInfo($"Coord {i}: {oldGhostCoord}");
+                    //logger.LogInfo($"Coord {i}: {oldGhostCoord}");
 
                     //Obtain the coords of the new format from spawnData and add them to the new list
                     for (int j = 0; j < spawnData.GhostCoords.Count; j++)
                     {
                         Vector3 newCoord = spawnData.GhostCoords[j].Coord;
-                        logger.LogInfo($"spawnData coord {j}");
+                        //logger.LogInfo($"spawnData coord {j}");
                         if (spawnData.GhostCoords[j].Coord == oldGhostCoord.Coord)
                         {
                             logger.LogInfo($"spawnData coord #{j}: {newCoord} matches coord #{i}: {oldGhostCoord.Coord}");
@@ -310,7 +308,7 @@ namespace MoreLeviathanSpawns
                 //Select an index of the ReaperCoords list randomly, and add that reaper coordinate to the new coord file
                 int j = rnd.Next(0, spawnData.ReaperCoords.Count - 1);
 
-                logger.LogInfo($"Adding Reaper spawn #{i + 1} ({j + 1}) - Coords: {spawnData.ReaperCoords[j].Coord}");
+                logger.LogInfo($"Adding Reaper spawn #{i + 1} (Index {j + 1}) - Coords: {spawnData.ReaperCoords[j].Coord}");
 
                 //Add the selected reaper coordinate to the new coord file
                 saveCoords.ReaperCoords.Add(spawnData.ReaperCoords[j]);
@@ -328,7 +326,7 @@ namespace MoreLeviathanSpawns
                 //Log whether the ghost leviathan added is an adult or a juvenile
                 string ghostType = "Adult";
                 if (spawnData.GhostCoords[j].GhostType == 2) { ghostType = "Juvenile"; }
-                logger.LogInfo($"Adding Ghost ({ghostType}) spawn #{i + 1} ({j + 1}) - Coords: {spawnData.GhostCoords[j].Coord}");
+                logger.LogInfo($"Adding Ghost ({ghostType}) spawn #{i + 1} (Index {j + 1}) - Coords: {spawnData.GhostCoords[j].Coord}");
 
                 //Add the selected ghost coordinate to the new coord file
                 saveCoords.GhostCoords.Add(spawnData.GhostCoords[j]);
