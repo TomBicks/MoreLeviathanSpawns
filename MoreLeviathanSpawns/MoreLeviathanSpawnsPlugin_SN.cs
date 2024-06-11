@@ -161,7 +161,6 @@ namespace MoreLeviathanSpawns
 
             //Check for the specific outdated change; if found, the coord file needs to be updated
             //Check for outdated format (no ListIndexes) from version 3.0.0
-            //logger.LogWarning($"ReaperCoords ListIndex = {saveCoords.ReaperCoords[0].ListIndex}, GhostCoords ListIndex = {saveCoords.GhostCoords[0].ListIndex}");
             bool updateNeeded = (saveCoords.ReaperCoords[0].ListIndex == -1 || saveCoords.GhostCoords[0].ListIndex == -1);
 
             //Log whether update is needed
@@ -199,13 +198,11 @@ namespace MoreLeviathanSpawns
                     //Obtain the coords of thd old format from saveCoords (saved to the current savefile)
                     ReaperCoords oldReaperCoord = saveCoords.ReaperCoords[i];
                     Vector3 oldCoord = new Vector3(oldReaperCoord.X, oldReaperCoord.Y, oldReaperCoord.Z);
-                    //logger.LogInfo($"Coord {i}: {oldCoord}");
 
                     //Obtain the coords of the new format from spawnData and add them to the new list
                     for (int j = 0; j < spawnData.ReaperCoords.Count; j++)
                     {
                         Vector3 newCoord = spawnData.ReaperCoords[j].Coord;
-                        //logger.LogInfo($"spawnData coord {j}");
                         if (spawnData.ReaperCoords[j].Coord == oldCoord)
                         {
                             logger.LogInfo($"spawnData coord #{j}: {newCoord} matches coord #{i}: {oldCoord}");
@@ -234,13 +231,11 @@ namespace MoreLeviathanSpawns
                 {
                     //Obtain the coords of thd old format from saveCoords (saved to the current savefile)
                     GhostCoords oldGhostCoord = saveCoords.GhostCoords[i];
-                    //logger.LogInfo($"Coord {i}: {oldGhostCoord}");
 
                     //Obtain the coords of the new format from spawnData and add them to the new list
                     for (int j = 0; j < spawnData.GhostCoords.Count; j++)
                     {
                         Vector3 newCoord = spawnData.GhostCoords[j].Coord;
-                        //logger.LogInfo($"spawnData coord {j}");
                         if (spawnData.GhostCoords[j].Coord == oldGhostCoord.Coord)
                         {
                             logger.LogInfo($"spawnData coord #{j}: {newCoord} matches coord #{i}: {oldGhostCoord.Coord}");
